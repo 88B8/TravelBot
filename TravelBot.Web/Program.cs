@@ -20,6 +20,16 @@ namespace TravelBot.Web
             var builder = WebApplication.CreateBuilder(args);
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("Policy", config =>
+                {
+                    config.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+
             builder.Services.AddDbContext<TravelBotContext>(options =>
                 options.UseNpgsql(connectionString)
                     .LogTo(Console.WriteLine));
@@ -46,6 +56,8 @@ namespace TravelBot.Web
             });
 
             var app = builder.Build();
+
+            app.UseCors("Policy");
 
             if (app.Environment.IsDevelopment())
             {

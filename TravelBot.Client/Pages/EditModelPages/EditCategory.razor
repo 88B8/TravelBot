@@ -1,0 +1,92 @@
+﻿@page "/Category/Edit/{Id:guid}"
+@using Blazored.FluentValidation
+@using TravelBot.Client.Contracts.Client
+@using TravelBot.Client.Validators
+@inject ITravelBotApiClient TravelBotApiClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>Изменение категории</PageTitle>
+
+<h3>Изменение категории</h3>
+
+@if (isLoading)
+{
+    <p>Загрузка...</p>
+}
+else if (item == null)
+{
+    <p class="text-danger">Категория не найдена.</p>
+}
+else
+{
+    <EditForm Model="item" OnValidSubmit="HandleSubmit">
+	    <FluentValidationValidator Validator="validator"></FluentValidationValidator>
+
+        <div class="form-group">
+            <label for="Name">Название:</label>
+            <InputText id="Name" @bind-Value="item.Name" class="form-control"/>
+            <ValidationMessage For="@(() => item.Name)"></ValidationMessage>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-success">Сохранить</button>
+            <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Отмена</button>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private CategoryCreateApiModel? item;
+    private CancellationTokenSource cancellationTokenSource = new();
+    private CategoryCreateApiModelValidator validator = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var existingCategory = await TravelBotApiClient.CategoryGETAsync(Id, cancellationTokenSource.Token);
+            if (existingCategory != null)
+            {
+	            item = new CategoryCreateApiModel
+                {
+                    Name = existingCategory.Name
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при загрузке категории: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+	        var result = await validator.ValidateAsync(item);
+
+	        if (result.IsValid)
+	        {
+                await TravelBotApiClient.CategoryPUTAsync(Id, item, cancellationTokenSource.Token);
+		        NavigationManager.NavigateTo("/Category");
+	        }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при сохранении категории: {ex.Message}");
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/Category");
+    }
+}

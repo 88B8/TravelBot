@@ -1,0 +1,95 @@
+﻿@page "/Category"
+@using TravelBot.Client.Contracts.Client
+@inject ITravelBotApiClient TravelBotClient
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@implements IDisposable
+
+<PageTitle>Главная. Категории</PageTitle>
+
+<div>
+    <button class="btn btn-primary" @onclick="AddCategory">
+        <i class="fas fa-plus"></i> Добавить категорию
+    </button>
+</div>
+<hr size="3" />
+
+@if (!items.Any())
+{
+    <p><em>Нет категорий</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in items)
+            {
+                <tr>
+                    <td>@(item.Name ?? "(без названия)")</td>
+                    <td>
+                        <select class="form-control" @onchange="@(e => HandleActionSelection(item.Id, e.Value?.ToString()))">
+                            <option value="">Выберите действие</option>
+                            <option value="Edit">Изменить</option>
+                            <option value="Delete">Удалить</option>
+                        </select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private readonly CancellationTokenSource cancellationTokenSource = new();
+    private ICollection<CategoryApiModel> items = new List<CategoryApiModel>();
+
+    private void AddCategory()
+    {
+        NavigationManager.NavigateTo("/Category/Create");
+    }
+
+    private async Task HandleActionSelection(Guid id, string? action)
+    {
+        if (string.IsNullOrEmpty(action))
+            return;
+
+        switch (action)
+        {
+            case "Edit":
+                NavigationManager.NavigateTo($"/Category/Edit/{id}");
+                break;
+
+            case "Delete":
+                var confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Вы уверены, что хотите удалить эту категорию?");
+                if (confirmed)
+                {
+                    await TravelBotClient.CategoryDELETEAsync(id, cancellationTokenSource.Token);
+                    var item = items.FirstOrDefault(x => x.Id == id);
+                    if (item != null)
+                    {
+                        items?.Remove(item);
+                        StateHasChanged();
+                    }
+                }
+                break;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await TravelBotClient.CategoryAllAsync(cancellationTokenSource.Token)
+                 ?? new List<CategoryApiModel>();
+    }
+
+    public void Dispose()
+    {
+        cancellationTokenSource.Cancel();
+        cancellationTokenSource.Dispose();
+    }
+}

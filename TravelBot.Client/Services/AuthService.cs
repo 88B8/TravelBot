@@ -21,13 +21,13 @@ namespace TravelBot.Client.Services
             this.localStorage = localStorage;
         }
 
-        public async Task<bool> Login(LoginRequestModel request, CancellationToken cancellationToken)
+        async Task<string?> IAuthService.LoginUser(LoginRequestModel request, CancellationToken cancellationToken)
         {
-            var response = await httpClient.PostAsJsonAsync("/Login/", request, cancellationToken);
+            var response = await httpClient.PostAsJsonAsync("Login/", request, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {
-                return false;
+                return null;
             }
 
             var token = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -35,10 +35,10 @@ namespace TravelBot.Client.Services
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            return true;
+            return token;
         }
 
-        public async Task Logout(CancellationToken cancellationToken)
+        async Task IAuthService.Logout(CancellationToken cancellationToken)
         {
             await localStorage.RemoveItemAsync("token", cancellationToken);
             httpClient.DefaultRequestHeaders.Authorization = null;

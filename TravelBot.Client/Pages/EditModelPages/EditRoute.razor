@@ -1,0 +1,198 @@
+﻿@page "/Route/Edit/{Id:guid}"
+@using Blazored.FluentValidation
+@using TravelBot.Client.Contracts.Client
+@using TravelBot.Client.Validators
+@inject ITravelBotApiClient TravelBotApiClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>Изменение маршрута</PageTitle>
+
+<h3>Изменение маршрута</h3>
+
+@if (isLoading)
+{
+    <p>Загрузка...</p>
+}
+else if (item == null)
+{
+    <p class="text-danger">Маршрут не найден.</p>
+}
+else
+{
+    <EditForm Model="item" OnValidSubmit="HandleSubmit">
+        <FluentValidationValidator Validator="validator" />
+
+        <div class="form-group mb-3">
+            <label for="ReasonToVisit">Причина посетить:</label>
+            <InputText id="ReasonToVisit" class="form-control" @bind-Value="item.ReasonToVisit" />
+            <ValidationMessage For="@(() => item.ReasonToVisit)" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="StartPoint">Отправная точка:</label>
+            <InputText id="StartPoint" class="form-control" @bind-Value="item.StartPoint" />
+            <ValidationMessage For="@(() => item.StartPoint)" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="Season">Сезон:</label>
+            <InputSelect id="Season" class="form-select" @bind-Value="item.Season">
+                @foreach (var season in Enum.GetValues(typeof(SeasonApiModel)).Cast<SeasonApiModel>())
+                {
+                    <option value="@season">@GetSeasonName(season)</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => item.Season)" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="Budget">Бюджет:</label>
+            <InputText id="Budget" class="form-control" @bind-Value="item.Budget" />
+            <ValidationMessage For="@(() => item.Budget)" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="AverageTime">Среднее время (в минутах):</label>
+            <InputNumber id="AverageTime" class="form-control" @bind-Value="item.AverageTime" />
+            <ValidationMessage For="@(() => item.AverageTime)" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Места маршрута:</label>
+
+            @if (item.PlaceIds.Any())
+            {
+                <ul class="list-group mb-2">
+                    @foreach (var placeId in item.PlaceIds)
+                    {
+                        var place = allPlaces.FirstOrDefault(p => p.Id == placeId);
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @(place?.Name ?? "Неизвестное место")
+                            <button type="button" class="btn btn-sm btn-danger" @onclick="() => RemovePlace(placeId)">Удалить</button>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-muted">Нет добавленных мест</p>
+            }
+
+            <div class="input-group">
+                <select class="form-select" @onchange="OnPlaceSelected">
+                    <option value="">Выберите место для добавления</option>
+                    @foreach (var place in allPlaces)
+                    {
+                        <option value="@place.Id">@place.Name</option>
+                    }
+                </select>
+                <button type="button" class="btn btn-primary" @onclick="AddPlace" disabled="@string.IsNullOrEmpty(selectedPlaceId)">Добавить</button>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-success">Сохранить</button>
+            <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Отмена</button>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private RouteCreateApiModel? item;
+    private RouteCreateApiModelValidator validator = new();
+    private List<PlaceApiModel> allPlaces = new();
+    private string? selectedPlaceId;
+    private bool isLoading = true;
+    private readonly CancellationTokenSource cancellationTokenSource = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var route = await TravelBotApiClient.RouteGETAsync(Id, cancellationTokenSource.Token);
+            allPlaces = (await TravelBotApiClient.PlaceAllAsync(cancellationTokenSource.Token))?.ToList() ?? new();
+
+            if (route != null)
+            {
+                item = new RouteCreateApiModel
+                    {
+                        ReasonToVisit = route.ReasonToVisit,
+                        StartPoint = route.StartPoint,
+                        Season = route.Season,
+                        Budget = route.Budget,
+                        AverageTime = route.AverageTime,
+                        PlaceIds = route.Places.Select(p => p.Id).ToList()
+                    };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при загрузке маршрута: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void OnPlaceSelected(ChangeEventArgs e)
+    {
+        selectedPlaceId = e.Value?.ToString();
+    }
+
+    private void AddPlace()
+    {
+        if (Guid.TryParse(selectedPlaceId, out var placeId) && item is not null)
+        {
+            if (!item.PlaceIds.Contains(placeId))
+            {
+                item.PlaceIds.Add(placeId);
+            }
+        }
+
+        selectedPlaceId = null;
+        StateHasChanged();
+    }
+
+    private void RemovePlace(Guid placeId)
+    {
+        item?.PlaceIds.Remove(placeId);
+        StateHasChanged();
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (item == null)
+            return;
+
+        var result = await validator.ValidateAsync(item);
+        if (!result.IsValid)
+            return;
+
+        try
+        {
+            await TravelBotApiClient.RoutePUTAsync(Id, item, cancellationTokenSource.Token);
+            NavigationManager.NavigateTo("/Route");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при сохранении маршрута: {ex.Message}");
+        }
+    }
+
+    private void Cancel() => NavigationManager.NavigateTo("/Route");
+
+    private string? GetSeasonName(SeasonApiModel season)
+        => season switch
+        {
+            SeasonApiModel._0 => "Круглый год",
+            SeasonApiModel._1 => "Зима",
+            SeasonApiModel._2 => "Лето",
+            SeasonApiModel._3 => "Лето-осень",
+            SeasonApiModel._4 => "Весна-осень",
+            _ => null,
+        };
+}

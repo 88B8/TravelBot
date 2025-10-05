@@ -13,6 +13,7 @@ namespace TravelBot.Services.Validators
         /// </summary>
         public PassportCreateModelValidator()
         {
+
         }
     }
 }

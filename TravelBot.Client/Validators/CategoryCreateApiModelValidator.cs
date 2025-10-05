@@ -1,0 +1,24 @@
+﻿using FluentValidation;
+using TravelBot.Client.Contracts.Client;
+using TravelBot.Entities.ValidationRules;
+
+namespace TravelBot.Client.Validators
+{
+    /// <summary>
+    /// Валиадтор <see cref="CategoryCreateApiModel"/>
+    /// </summary>
+    public class CategoryCreateApiModelValidator : AbstractValidator<CategoryCreateApiModel>
+    {
+        /// <summary>
+        /// ctor
+        /// </summary>
+        public CategoryCreateApiModelValidator()
+        {
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .WithMessage("Имя категории обязательно")
+                .Length(CategoryValidationRules.MinNameLength, CategoryValidationRules.MaxNameLength)
+                .WithMessage($"Длина имени категории должна быть от {CategoryValidationRules.MinNameLength} до {CategoryValidationRules.MaxNameLength} символов");
+        }
+    }
+}

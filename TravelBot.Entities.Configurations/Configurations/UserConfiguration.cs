@@ -24,11 +24,6 @@ namespace TravelBot.Entities.Configurations.Configurations
             builder
                 .Property(x => x.TelegramId)
                 .IsRequired();
-
-            builder
-                .HasOne(x => x.Passport)
-                .WithOne()
-                .HasForeignKey<User>(x => x.PassportId);
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using TravelBot.Services.Contracts.Models.Auth;
 using TravelBot.Services.Contracts.Models.CreateModels;
 using TravelBot.Services.Contracts.Models.RequestModels;
-using TravelBot.Web.Models.Auth;
 using TravelBot.Web.Models.CreateApiModels;
 using TravelBot.Web.Models.ResponseApiModels;
 
@@ -21,7 +19,6 @@ namespace TravelBot.Web.Infrastructure
             // DTO Model -> Api Model
             CreateMap<AdminModel, AdminApiModel>(MemberList.Destination);
             CreateMap<CategoryModel, CategoryApiModel>(MemberList.Destination);
-            CreateMap<LoginRequestModel, LoginRequestApiModel>(MemberList.Destination).ReverseMap();
             CreateMap<PassportModel, PassportApiModel>(MemberList.Destination);
             CreateMap<PlaceModel, PlaceApiModel>(MemberList.Destination);
             CreateMap<RouteModel, RouteApiModel>(MemberList.Destination);

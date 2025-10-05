@@ -1,7 +1,10 @@
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using TravelBot.Client;
+using TravelBot.Client.Contracts.Client;
+using TravelBot.Client.Contracts.Services;
 using TravelBot.Client.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -9,11 +12,19 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<CustomAuthStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<CustomAuthStateProvider>());
 
-builder.Services.AddScoped(_ => new HttpClient
+builder.Services.AddScoped(_ =>
+    new HttpClient { BaseAddress = new Uri("https://localhost:7288/") 
+    });
+
+builder.Services.AddScoped<ITravelBotApiClient>(sp =>
 {
-    BaseAddress = new Uri("https://localhost:5001"),
+    var httpClient = sp.GetRequiredService<HttpClient>();
+    return new TravelBotApiClient("https://localhost:7288/", httpClient);
 });
 
 await builder.Build().RunAsync();

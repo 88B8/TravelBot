@@ -1,0 +1,56 @@
+﻿@page "/login"
+@using TravelBot.Client.Contracts.Services
+@using TravelBot.Client.Services
+@using TravelBot.Shared.Models
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@inject CustomAuthStateProvider AuthStateProvider
+
+<h3>Вход в систему</h3>
+
+<div class="login-form">
+	<div>
+		<label>Логин:</label>
+		<input @bind="login" />
+	</div>
+	<div>
+		<label>Пароль:</label>
+		<input type="password" @bind="password" />
+	</div>
+	<button @onclick="HandleLogin">Войти</button>
+</div>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+	<p style="color:red">@errorMessage</p>
+}
+
+@code {
+	private string login = string.Empty;
+	private string password = string.Empty;
+	private string errorMessage = string.Empty;
+
+	private async Task HandleLogin()
+	{
+		errorMessage = string.Empty;
+
+		var request = new LoginRequestModel
+		{
+			Login = login,
+			Password = password
+		};
+
+		var token = await AuthService.LoginUser(request, CancellationToken.None);
+
+		if (!string.IsNullOrEmpty(token))
+		{
+			AuthStateProvider.NotifyUserAuthentication(token);
+
+			NavigationManager.NavigateTo("/");
+		}
+		else
+		{
+			errorMessage = "Неверный логин или пароль";
+		}
+	}
+}

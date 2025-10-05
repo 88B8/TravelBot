@@ -10,7 +10,7 @@ namespace TravelBot.Client.Contracts.Services
         /// <summary>
         /// Логин
         /// </summary>
-        Task<bool> Login(LoginRequestModel request, CancellationToken cancellationToken);
+        Task<string?> LoginUser(LoginRequestModel request, CancellationToken cancellationToken);
 
         /// <summary>
         /// Выход

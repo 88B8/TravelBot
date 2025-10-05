@@ -1,18 +1,18 @@
 ﻿using FluentValidation;
+using TravelBot.Client.Contracts.Client;
 using TravelBot.Entities.ValidationRules;
-using TravelBot.Services.Contracts.Models.CreateModels;
 
-namespace TravelBot.Services.Validators
+namespace TravelBot.Client.Validators
 {
     /// <summary>
-    /// Валидация <see cref="PlaceCreateModel"/>
+    /// Валидатор <see cref="PlaceCreateApiModel"/>
     /// </summary>
-    public class PlaceCreateModelValidator : AbstractValidator<PlaceCreateModel>
+    public class PlaceCreateApiModelValidator : AbstractValidator<PlaceCreateApiModel>
     {
         /// <summary>
         /// ctor
         /// </summary>
-        public PlaceCreateModelValidator()
+        public PlaceCreateApiModelValidator()
         {
             RuleFor(x => x.CategoryId)
                 .NotEmpty()

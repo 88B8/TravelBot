@@ -10,6 +10,6 @@ namespace TravelBot.Web.Models.CreateApiModels
         /// <summary>
         /// Места
         /// </summary>
-        public IEnumerable<Guid> PlaceIds { get; set; } = null!;
+        public List<Guid> PlaceIds { get; set; } = null!;
     }
 }

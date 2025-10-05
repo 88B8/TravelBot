@@ -1,5 +1,4 @@
 ﻿using TravelBot.Entities.BaseModels;
-using TravelBot.Entities.Enums;
 
 namespace TravelBot.Entities
 {

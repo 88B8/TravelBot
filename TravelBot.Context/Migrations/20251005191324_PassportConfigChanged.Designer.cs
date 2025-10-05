@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TravelBot.Context;
@@ -11,9 +12,11 @@ using TravelBot.Context;
 namespace TravelBot.Context.Migrations
 {
     [DbContext(typeof(TravelBotContext))]
-    partial class TravelBotContextModelSnapshot : ModelSnapshot
+    [Migration("20251005191324_PassportConfigChanged")]
+    partial class PassportConfigChanged
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,15 +84,6 @@ namespace TravelBot.Context.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -275,7 +269,8 @@ namespace TravelBot.Context.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PassportId");
+                    b.HasIndex("PassportId")
+                        .IsUnique();
 
                     b.ToTable("Users", (string)null);
                 });
@@ -332,8 +327,8 @@ namespace TravelBot.Context.Migrations
             modelBuilder.Entity("TravelBot.Entities.User", b =>
                 {
                     b.HasOne("TravelBot.Entities.Passport", "Passport")
-                        .WithMany()
-                        .HasForeignKey("PassportId")
+                        .WithOne()
+                        .HasForeignKey("TravelBot.Entities.User", "PassportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

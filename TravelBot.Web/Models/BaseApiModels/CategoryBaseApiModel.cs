@@ -3,7 +3,7 @@
     /// <summary>
     /// Базовая API модель категории
     /// </summary>
-    public class CategoryBaseApiModel
+    public abstract class CategoryBaseApiModel
     {
         /// <summary>
         /// Название категории

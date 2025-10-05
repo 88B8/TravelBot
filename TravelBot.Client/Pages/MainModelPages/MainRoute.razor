@@ -1,0 +1,128 @@
+﻿@page "/Route"
+@using TravelBot.Client.Contracts.Client
+@inject NavigationManager NavigationManager
+@inject ITravelBotApiClient TravelBotClient
+@inject IJSRuntime JsRuntime
+
+<PageTitle>Главная. Маршруты</PageTitle>
+
+<div>
+	<button class="btn btn-primary" @onclick="AddRoute">
+		<i class="fas fa-plus"></i> Добавить маршрут
+	</button>
+</div>
+<hr size="3" />
+
+@if (!items.Any())
+{
+	<p><em>Нет маршрутов</em></p>
+}
+else
+{
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Почему стоит посетить</th>
+				<th>Отправная точка</th>
+				<th>Сезон</th>
+				<th>Бюджет</th>
+				<th>Среднее время (мин)</th>
+				<th>Места в маршруте</th>
+				<th>Действия</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in items)
+			{
+				<tr>
+					<td>@(item.ReasonToVisit ?? "нет причины")</td>
+					<td>@(item.StartPoint ?? "нет отправной точки")</td>
+					<td>@(GetSeasonName(item.Season) ?? "нет сезона")</td>
+					<td>@(item.Budget ?? "нет бюджета")</td>
+					<td>@(item.AverageTime.ToString())</td>
+					<td>
+						@if (item.Places != null && item.Places.Any())
+						{
+							<ul class="list-unstyled mb-0">
+								@foreach (var place in item.Places)
+								{
+									<li>
+										<i class="bi bi-geo-alt-fill text-primary"></i> @place.Name
+									</li>
+								}
+							</ul>
+						}
+						else
+						{
+							<span class="text-muted">Нет мест</span>
+						}
+					</td>
+					<td>
+						<select class="form-select" @onchange="@(e => HandleActionSelection(item.Id, e.Value?.ToString()))">
+							<option value="">Выберите действие</option>
+							<option value="Edit">Изменить</option>
+							<option value="Delete">Удалить</option>
+						</select>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@code {
+	private readonly CancellationTokenSource cancellationTokenSource = new();
+	private ICollection<RouteApiModel> items = new List<RouteApiModel>();
+
+	private void AddRoute()
+	{
+		NavigationManager.NavigateTo("Route/Create");
+	}
+
+	private async Task HandleActionSelection(Guid id, string? action)
+	{
+		if (string.IsNullOrEmpty(action))
+		{
+			return;
+		}
+
+		switch (action)
+		{
+			case "Edit":
+				NavigationManager.NavigateTo($"/Route/Edit/{id}");
+				break;
+
+			case "Delete":
+				var confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Вы уверены, что хотите удалить эту категорию?");
+				if (confirmed)
+				{
+					await TravelBotClient.RouteDELETEAsync(id, cancellationTokenSource.Token);
+					var item = items.FirstOrDefault(x => x.Id == id);
+
+					if (item != null)
+					{
+						items.Remove(item);
+						StateHasChanged();
+					}
+				}
+				break;
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		items = await TravelBotClient.RouteAllAsync(cancellationTokenSource.Token)
+				?? new List<RouteApiModel>();
+	}
+
+	private string? GetSeasonName(SeasonApiModel season)
+		=> season switch
+		{
+			SeasonApiModel._0 => "Круглый год",
+			SeasonApiModel._1 => "Зима",
+			SeasonApiModel._2 => "Лето",
+			SeasonApiModel._3 => "Лето-осень",
+			SeasonApiModel._4 => "Весна-осень",
+			_ => null,
+		};
+}
