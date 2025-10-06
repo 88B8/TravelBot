@@ -16,17 +16,19 @@ namespace TravelBot.Services.Services
         private readonly IUserReadRepository userReadRepository;
         private readonly IUserWriteRepository userWriteRepository;
         private readonly IPassportReadRepository passportReadRepository;
+        private readonly IPassportWriteRepository passportWriteRepository;
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
 
         /// <summary>
         /// ctor
         /// </summary>
-        public UserService(IUserReadRepository userReadRepository, IUserWriteRepository userWriteRepository, IPassportReadRepository passportReadRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public UserService(IUserReadRepository userReadRepository, IUserWriteRepository userWriteRepository, IPassportReadRepository passportReadRepository, IPassportWriteRepository passportWriteRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.userReadRepository = userReadRepository;
             this.userWriteRepository = userWriteRepository;
             this.passportReadRepository = passportReadRepository;
+            this.passportWriteRepository = passportWriteRepository;
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
@@ -43,17 +45,21 @@ namespace TravelBot.Services.Services
 
         async Task IUserService.Delete(Guid id, CancellationToken cancellationToken)
         {
-            var item = await userReadRepository.GetByIdRaw(id, cancellationToken)
-                       ?? throw new TravelBotNotFoundException($"Не удалось найти место с идентификатором {id}");
+            var item = await userReadRepository.GetByIdRaw(id, cancellationToken) 
+                       ?? throw new TravelBotNotFoundException($"Не удалось найти пользователя с идентификатором {id}");
+
+            var passport = await passportReadRepository.GetByIdRaw(item.PassportId, cancellationToken) 
+                           ?? throw new TravelBotNotFoundException($"Не удалось найти паспорт с идентификатором {id}");
 
             userWriteRepository.Delete(item);
+            passportWriteRepository.Delete(passport);
             await unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
         async Task<UserModel> IUserService.Edit(Guid id, UserCreateModel model, CancellationToken cancellationToken)
         {
             var item = await userReadRepository.GetByIdRaw(id, cancellationToken)
-                       ?? throw new TravelBotNotFoundException($"Не удалось найти место с идентификатором {id}");
+                       ?? throw new TravelBotNotFoundException($"Не удалось найти пользователя с идентификатором {id}");
             var passport = await passportReadRepository.GetByIdRaw(model.PassportId, cancellationToken)
                            ?? throw new TravelBotNotFoundException($"Не удалось найти паспорт с идентификатором {model.PassportId}");
 
@@ -78,7 +84,15 @@ namespace TravelBot.Services.Services
         async Task<UserModel> IUserService.GetById(Guid id, CancellationToken cancellationToken)
         {
             var item = await userReadRepository.GetById(id, cancellationToken)
-                       ?? throw new TravelBotNotFoundException($"Не удалось найти место с идентификатором {id}");
+                       ?? throw new TravelBotNotFoundException($"Не удалось найти пользователя с идентификатором {id}");
+
+            return mapper.Map<UserModel>(item);
+        }
+
+        async Task<UserModel> IUserService.GetByTelegramId(long telegramId, CancellationToken cancellationToken)
+        {
+            var item = await userReadRepository.GetByTelegramId(telegramId, cancellationToken)
+                ?? throw new TravelBotNotFoundException($"Не удалось найти пользователя с идентификатором {telegramId}");
 
             return mapper.Map<UserModel>(item);
         }

@@ -103,13 +103,14 @@ namespace TravelBot.Services.Services
             }
 
             var routePlaces = await routePlaceReadRepository.GetByRouteId(id, cancellationToken);
-            var routePlaceIds = routePlaces.Select(x => x.Id).ToList();
+            var routePlaceIds = routePlaces.Select(x => x.PlaceId).ToList();
             var placeToDeleteIds = routePlaceIds
                 .Except(model.PlaceIds)
                 .ToList();
             var placesToDelete = await routePlaceReadRepository.GetByPlaceIds(placeToDeleteIds, cancellationToken);
             var placeToAddIds = model.PlaceIds
-                .Except(routePlaceIds);
+                .Except(routePlaceIds)
+                .ToList();
 
             foreach (var placeToDelete in placesToDelete)
             {

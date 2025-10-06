@@ -15,7 +15,7 @@ namespace TravelBot.Entities
         /// <summary>
         /// Телеграм идентификатор
         /// </summary>
-        public int TelegramId { get; set; }
+        public long TelegramId { get; set; }
 
         /// <summary>
         /// Идентификатор паспорта

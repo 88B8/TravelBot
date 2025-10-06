@@ -1,6 +1,4 @@
-﻿using TravelBot.Entities;
-
-namespace TravelBot.Repositories.Contracts.Models
+﻿namespace TravelBot.Repositories.Contracts.Models
 {
     /// <summary>
     /// Модель паспорта с заполненными связанными сущностями

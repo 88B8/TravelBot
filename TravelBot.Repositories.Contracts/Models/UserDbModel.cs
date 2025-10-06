@@ -20,7 +20,7 @@ namespace TravelBot.Repositories.Contracts.Models
         /// <summary>
         /// Телеграм идентификатор
         /// </summary>
-        public int TelegramId { get; set; }
+        public long TelegramId { get; set; }
 
         /// <summary>
         /// Паспорт

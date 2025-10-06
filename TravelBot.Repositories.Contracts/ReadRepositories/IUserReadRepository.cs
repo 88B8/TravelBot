@@ -19,6 +19,11 @@ namespace TravelBot.Repositories.Contracts.ReadRepositories
         Task<User?> GetByIdRaw(Guid id, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Получить <see cref="User"/> по телеграм идентификатору
+        /// </summary>
+        Task<UserDbModel?> GetByTelegramId(long id, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Получить список всех <see cref="UserDbModel"/>
         /// </summary>
         Task<IReadOnlyCollection<UserDbModel>> GetAll(CancellationToken cancellationToken);

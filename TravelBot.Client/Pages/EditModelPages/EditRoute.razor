@@ -102,7 +102,7 @@ else
     public Guid Id { get; set; }
 
     private RouteCreateApiModel? item;
-    private RouteCreateApiModelValidator validator = new();
+    private readonly RouteCreateApiModelValidator validator = new();
     private List<PlaceApiModel> allPlaces = new();
     private string? selectedPlaceId;
     private bool isLoading = true;
@@ -124,7 +124,7 @@ else
                         Season = route.Season,
                         Budget = route.Budget,
                         AverageTime = route.AverageTime,
-                        PlaceIds = route.Places.Select(p => p.Id).ToList()
+                        PlaceIds = route.Places?.Select(p => p.Id).ToList() ?? new List<Guid>()
                     };
             }
         }
@@ -145,7 +145,10 @@ else
 
     private void AddPlace()
     {
-        if (Guid.TryParse(selectedPlaceId, out var placeId) && item is not null)
+        if (item?.PlaceIds == null)
+            item!.PlaceIds = new List<Guid>();
+
+        if (Guid.TryParse(selectedPlaceId, out var placeId))
         {
             if (!item.PlaceIds.Contains(placeId))
             {
@@ -159,7 +162,10 @@ else
 
     private void RemovePlace(Guid placeId)
     {
-        item?.PlaceIds.Remove(placeId);
+        if (item?.PlaceIds?.Contains(placeId) == true)
+        {
+            item.PlaceIds.Remove(placeId);
+        }
         StateHasChanged();
     }
 
@@ -174,6 +180,8 @@ else
 
         try
         {
+            item.PlaceIds = item.PlaceIds.Distinct().ToList();
+
             await TravelBotApiClient.RoutePUTAsync(Id, item, cancellationTokenSource.Token);
             NavigationManager.NavigateTo("/Route");
         }
@@ -185,14 +193,13 @@ else
 
     private void Cancel() => NavigationManager.NavigateTo("/Route");
 
-    private string? GetSeasonName(SeasonApiModel season)
-        => season switch
-        {
-            SeasonApiModel._0 => "Круглый год",
-            SeasonApiModel._1 => "Зима",
-            SeasonApiModel._2 => "Лето",
-            SeasonApiModel._3 => "Лето-осень",
-            SeasonApiModel._4 => "Весна-осень",
-            _ => null,
-        };
+    private string? GetSeasonName(SeasonApiModel season) => season switch
+    {
+        SeasonApiModel._0 => "Круглый год",
+        SeasonApiModel._1 => "Зима",
+        SeasonApiModel._2 => "Лето",
+        SeasonApiModel._3 => "Лето-осень",
+        SeasonApiModel._4 => "Весна-осень",
+        _ => null,
+    };
 }

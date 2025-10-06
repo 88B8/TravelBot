@@ -15,6 +15,6 @@ namespace TravelBot.Services.Contracts.Models.BaseModels
         /// <summary>
         /// Телеграм идентификатор
         /// </summary>
-        public int TelegramId { get; set; }
+        public long TelegramId { get; set; }
     }
 }

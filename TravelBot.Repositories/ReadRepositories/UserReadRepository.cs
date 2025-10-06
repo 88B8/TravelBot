@@ -39,5 +39,12 @@ namespace TravelBot.Repositories.ReadRepositories
                 .NotDeletedAt()
                 .ById(id)
                 .FirstOrDefaultAsync(cancellationToken);
+
+        Task<UserDbModel?> IUserReadRepository.GetByTelegramId(long telegramId, CancellationToken cancellationToken)
+            => reader.Read<User>()
+                .NotDeletedAt()
+                .Where(x => x.TelegramId == telegramId)
+                .SelectUserDbModel()
+                .FirstOrDefaultAsync(cancellationToken);
     }
 }

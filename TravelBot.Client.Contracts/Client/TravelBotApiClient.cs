@@ -4076,7 +4076,7 @@ namespace TravelBot.Client.Contracts.Client
         /// Телеграм идентификатор
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("telegramId")]
-        public int TelegramId { get; set; }
+        public long TelegramId { get; set; }
 
         /// <summary>
         /// Идентификатор
@@ -4106,7 +4106,7 @@ namespace TravelBot.Client.Contracts.Client
         /// Телеграм идентификатор
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("telegramId")]
-        public int TelegramId { get; set; }
+        public long TelegramId { get; set; }
 
         /// <summary>
         /// Идентификатор паспорта

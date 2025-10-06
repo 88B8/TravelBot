@@ -19,6 +19,11 @@ namespace TravelBot.Services.Contracts.Services
         Task<UserModel> GetById(Guid id, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Возвращает <see cref="UserModel"/> по идентификатору телеграм
+        /// </summary>
+        Task<UserModel> GetByTelegramId(long telegramId, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Добавляет новый <see cref="UserModel"/>
         /// </summary>
         Task<UserModel> Create(UserCreateModel model, CancellationToken cancellationToken);

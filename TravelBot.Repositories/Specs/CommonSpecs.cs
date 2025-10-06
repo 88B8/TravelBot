@@ -39,6 +39,13 @@ namespace TravelBot.Repositories.Specs
         }
 
         /// <summary>
+        /// По короткому идентификатору
+        /// </summary>
+        public static IQueryable<TEntity> ByShortId<TEntity>(this IQueryable<TEntity> query, string id)
+            where TEntity : class, IEntityWithId
+            => query.Where(x => x.Id.ToString("N").Substring(0, 8) == id);
+
+        /// <summary>
         /// Возвращает <see cref="IReadOnlyCollection{TEntity}"/>
         /// </summary>
         public static Task<IReadOnlyCollection<TEntity>> ToReadOnlyCollectionAsync<TEntity>(this IQueryable<TEntity> query,
