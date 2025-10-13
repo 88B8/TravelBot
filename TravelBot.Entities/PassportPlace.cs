@@ -26,10 +26,5 @@ namespace TravelBot.Entities
         /// Навигационное свойство места
         /// </summary>
         public Place Place { get; set; } = null!;
-
-        /// <summary>
-        /// Дата посещения
-        /// </summary>
-        public DateOnly VisitedAt { get; set; }
     }
 }

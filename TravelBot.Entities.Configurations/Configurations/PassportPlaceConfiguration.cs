@@ -16,10 +16,6 @@ namespace TravelBot.Entities.Configurations.Configurations
                 .HasKey(x => x.Id);
 
             builder
-                .Property(x => x.VisitedAt)
-                .IsRequired();
-
-            builder
                 .HasOne(x => x.Passport)
                 .WithMany(x => x.PassportPlaces)
                 .HasForeignKey(x => x.PassportId);
