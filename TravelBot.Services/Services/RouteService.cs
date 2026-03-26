@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using TravelBot.Context.Contracts;
 using TravelBot.Entities;
-using TravelBot.Entities.Enums;
 using TravelBot.Repositories.Contracts.ReadRepositories;
 using TravelBot.Repositories.Contracts.WriteRepositories;
 using TravelBot.Services.Contracts.Exceptions;
 using TravelBot.Services.Contracts.Models.CreateModels;
-using TravelBot.Services.Contracts.Models.Enums;
 using TravelBot.Services.Contracts.Models.RequestModels;
 using TravelBot.Services.Contracts.Services;
 

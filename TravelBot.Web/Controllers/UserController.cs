@@ -14,7 +14,7 @@ namespace TravelBot.Web.Controllers
     /// </summary>
     [ApiController]
     [Authorize]
-    [Route("Api/[controller]")]
+    [Route("api/users")]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;

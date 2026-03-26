@@ -8,7 +8,7 @@ namespace TravelBot.Web.Controllers
     /// Контроллер аутентификации
     /// </summary>
     [ApiController]
-    [Route("Api/[controller]")]
+    [Route("api/auth")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService authService;
@@ -24,7 +24,7 @@ namespace TravelBot.Web.Controllers
         /// <summary>
         /// Аутентификация
         /// </summary>
-        [HttpPost("/Login/")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestModel request, CancellationToken cancellationToken)
         {
             var token = await authService.Login(request, cancellationToken);
