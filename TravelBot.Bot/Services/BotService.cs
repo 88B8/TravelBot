@@ -10,6 +10,7 @@ using TravelBot.Context.Contracts;
 using TravelBot.Entities;
 using TravelBot.Repositories.Contracts.ReadRepositories;
 using TravelBot.Repositories.Contracts.WriteRepositories;
+using User = TravelBot.Entities.User;
 
 namespace TravelBot.Bot.Services
 {
@@ -40,15 +41,23 @@ namespace TravelBot.Bot.Services
             this.unitOfWork = unitOfWork;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+        protected override Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            botClient.StartReceiving(
-                updateHandler: UpdateHandler,
-                errorHandler: ErrorHandler,
-                cancellationToken: cancellationToken);
+            try
+            {
+                botClient.StartReceiving(
+                    updateHandler: UpdateHandler,
+                    errorHandler: ErrorHandler,
+                    cancellationToken: cancellationToken);
+                return Task.CompletedTask;
+            }
+            catch (Exception exception)
+            {
+                return Task.FromException(exception);
+            }
         }
 
-        private async Task UpdateHandler(ITelegramBotClient botClient, Update update,
+        private async Task UpdateHandler(ITelegramBotClient bot, Update update,
             CancellationToken cancellationToken)
         {
             if (update.Type != UpdateType.Message || update.Message?.Text == null)
@@ -71,12 +80,12 @@ namespace TravelBot.Bot.Services
                 {
                     await AddPlaceFromParameter(userId, placeId, botClient, cancellationToken);
 
-                    await SendMainKeyboard(userId, botClient, cancellationToken);
+                    await SendMainKeyboard(userId, cancellationToken);
                 }
                 else
                 {
                     await botClient.SendMessage(userId, "С возвращением!", cancellationToken: cancellationToken);
-                    await SendMainKeyboard(userId, botClient, cancellationToken);
+                    await SendMainKeyboard(userId, cancellationToken);
                 }
 
                 return;
@@ -92,7 +101,7 @@ namespace TravelBot.Bot.Services
                     text: $"Рад познакомиться, {text}! 👋 Теперь ты зарегистрирован.",
                     cancellationToken: cancellationToken);
 
-                await SendMainKeyboard(userId, botClient, cancellationToken);
+                await SendMainKeyboard(userId, cancellationToken);
                 return;
             }
 
@@ -123,9 +132,9 @@ namespace TravelBot.Bot.Services
                 return;
             }
 
-            var newPassport = new Entities.Passport();
+            var newPassport = new Passport();
 
-            var newUser = new Entities.User
+            var newUser = new User
             {
                 Name = name,
                 TelegramId = userId,
@@ -147,7 +156,7 @@ namespace TravelBot.Bot.Services
 
             var routes = await routeReadRepository.GetAll(cancellationToken);
 
-            if (!routes.Any())
+            if (routes.Count == 0)
             {
                 await client.SendMessage(userId, "Маршрутов пока нет.", cancellationToken: cancellationToken);
                 return;
@@ -260,13 +269,12 @@ namespace TravelBot.Bot.Services
             await client.SendMessage(userId, $"Место {place.Name} добавлено в ваш туристический паспорт!", cancellationToken: cancellationToken);
         }
 
-        private async Task SendMainKeyboard(long userId, ITelegramBotClient botClient, CancellationToken cancellationToken)
+        private async Task SendMainKeyboard(long userId, CancellationToken cancellationToken)
         {
-            var replyKeyboard = new ReplyKeyboardMarkup(new[]
-            {
-                new KeyboardButton[] { "Показать маршруты", "Мой паспорт" },
-                new KeyboardButton[] { "Помощь", "Контакты" }
-            })
+            var replyKeyboard = new ReplyKeyboardMarkup([
+                ["Показать маршруты", "Мой паспорт"],
+                ["Помощь", "Контакты"]
+            ])
             {
                 ResizeKeyboard = true,
                 OneTimeKeyboard = false,
@@ -275,7 +283,7 @@ namespace TravelBot.Bot.Services
             await botClient.SendMessage(userId, "Выберите действие", replyMarkup: replyKeyboard, cancellationToken: cancellationToken);
         }
 
-        private async Task ErrorHandler(ITelegramBotClient client, Exception exception, HandleErrorSource source, CancellationToken token)
+        private static async Task ErrorHandler(ITelegramBotClient client, Exception exception, HandleErrorSource source, CancellationToken token)
         {
             Console.WriteLine($"Error: {exception.Message}");
             await Task.CompletedTask;

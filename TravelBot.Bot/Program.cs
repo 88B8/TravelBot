@@ -12,16 +12,18 @@ using TravelBot.Repositories.Contracts.WriteRepositories;
 using TravelBot.Repositories.ReadRepositories;
 using TravelBot.Repositories.WriteRepositories;
 
+namespace TravelBot.Bot;
+
 public class Program
 {
     public static async Task Main(string[] args)
     {
-        var connectionString = "Host=localhost;Port=5432;Database=TravelBot;Username=postgres;Password=123";
+        const string connectionString = "Host=localhost;Port=5432;Database=TravelBot;Username=postgres;Password=postgres";
 
         var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices((context, services) =>
+            .ConfigureServices((_, services) =>
             {
-                var token = "8442624105:AAHpcuNVhrp_VVXe1groquj62U_ToNIBPA0";
+                const string token = "8793597527:AAH4tZdCXVjAxieWOFLkoOzZ4VX8pWiUaR0";
 
                 services.AddDbContext<TravelBotContext>(options =>
                     options.UseNpgsql(connectionString)
