@@ -1,18 +1,17 @@
-﻿namespace TravelBot.Services.Contracts.Auth
+﻿namespace TravelBot.Services.Contracts.Auth;
+
+/// <summary>
+///     Хэшер паролей
+/// </summary>
+public interface IPasswordHasher
 {
     /// <summary>
-    /// Хэшер паролей
+    ///     Генерирует хэш пароля
     /// </summary>
-    public interface IPasswordHasher
-    {
-        /// <summary>
-        /// Генерирует хэш пароля
-        /// </summary>
-        string Generate(string password);
+    string Generate(string password);
 
-        /// <summary>
-        /// Сравнивает равенство пароля с хэшем
-        /// </summary>
-        bool Verify(string password, string passwordHash);
-    }
+    /// <summary>
+    ///     Сравнивает равенство пароля с хэшем
+    /// </summary>
+    bool Verify(string password, string passwordHash);
 }

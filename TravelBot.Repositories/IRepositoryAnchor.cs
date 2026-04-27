@@ -1,9 +1,8 @@
-﻿namespace TravelBot.Repositories
+﻿namespace TravelBot.Repositories;
+
+/// <summary>
+///     Маркерный интерфейс
+/// </summary>
+public interface IRepositoryAnchor
 {
-    /// <summary>
-    /// Маркерный интерфейс
-    /// </summary>
-    public interface IRepositoryAnchor
-    {
-    }
 }

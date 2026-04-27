@@ -1,13 +1,12 @@
-﻿namespace TravelBot.Common.Contracts
+﻿namespace TravelBot.Common.Contracts;
+
+/// <summary>
+///     Поставщим даты и времени
+/// </summary>
+public interface IDateTimeProvider
 {
     /// <summary>
-    /// Поставщим даты и времени
+    ///     Время сейчас
     /// </summary>
-    public interface IDateTimeProvider
-    {
-        /// <summary>
-        /// Время сейчас
-        /// </summary>
-        DateTimeOffset UtcNow();
-    }
+    DateTimeOffset UtcNow();
 }

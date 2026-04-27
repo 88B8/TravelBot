@@ -1,16 +1,14 @@
-﻿namespace TravelBot.Services.Contracts.Exceptions
+﻿namespace TravelBot.Services.Contracts.Exceptions;
+
+/// <summary>
+///     Исключение NotFound
+/// </summary>
+public class TravelBotNotFoundException : TravelBotException
 {
     /// <summary>
-    /// Исключение NotFound
+    ///     ctor
     /// </summary>
-    public class TravelBotNotFoundException : TravelBotException
+    public TravelBotNotFoundException(string message) : base(message)
     {
-        /// <summary>
-        /// ctor
-        /// </summary>
-        public TravelBotNotFoundException(string message) : base(message)
-        {
-            
-        }
     }
 }

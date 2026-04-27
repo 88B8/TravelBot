@@ -1,18 +1,17 @@
-﻿namespace TravelBot.Services.Contracts.Models.BaseModels
+﻿namespace TravelBot.Services.Contracts.Models.BaseModels;
+
+/// <summary>
+///     Базовая модель администратора
+/// </summary>
+public abstract class AdminBaseModel
 {
     /// <summary>
-    /// Базовая модель администратора
+    ///     Имя администратора
     /// </summary>
-    public abstract class AdminBaseModel
-    {
-        /// <summary>
-        /// Имя администратора
-        /// </summary>
-        public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Логин администратора
-        /// </summary>
-        public string Login { get; set; } = string.Empty;
-    }
+    /// <summary>
+    ///     Логин администратора
+    /// </summary>
+    public string Login { get; set; } = string.Empty;
 }

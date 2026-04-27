@@ -1,29 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace TravelBot.Common
+namespace TravelBot.Common;
+
+/// <summary>
+///     Расширения для enum
+/// </summary>
+public static class EnumExtensions
 {
     /// <summary>
-    /// Расширения для enum
+    ///     Получить отображаемое имя
     /// </summary>
-    public static class EnumExtensions
+    public static string GetDisplayName(this Enum enumValue)
     {
-        /// <summary>
-        /// Получить отображаемое имя
-        /// </summary>
-        public static string GetDisplayName(this Enum enumValue)
-        {
-            var memberInfo = enumValue.GetType().GetMember(enumValue.ToString());
+        var memberInfo = enumValue.GetType().GetMember(enumValue.ToString());
 
-            if (memberInfo.Length == 0)
-            {
-                return enumValue.ToString();
-            }
+        if (memberInfo.Length == 0) return enumValue.ToString();
 
-            var attribute = memberInfo[0]
-                .GetCustomAttribute<DisplayAttribute>();
+        var attribute = memberInfo[0]
+            .GetCustomAttribute<DisplayAttribute>();
 
-            return attribute?.Name ?? enumValue.ToString();
-        }
+        return attribute?.Name ?? enumValue.ToString();
     }
 }

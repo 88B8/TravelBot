@@ -1,0 +1,151 @@
+@page "/QrCode/Place"
+@inject ITravelBotApiClient TravelBotClient
+@inject NavigationManager NavigationManager
+@using TravelBot.Api.Client.Client
+@implements IDisposable
+
+<PageTitle>Генерация QR кода для места</PageTitle>
+
+<h3>Генерация QR кода для места</h3>
+
+@if (isLoading)
+{
+    <p>Загрузка...</p>
+}
+else if (places.Count == 0)
+{
+    <p><em>Нет доступных мест</em></p>
+}
+else
+{
+    <div class="form-group mb-3">
+        <label for="PlaceId">Место:</label>
+        <select id="PlaceId"
+                class="form-select"
+                @bind="selectedPlaceId">
+            <option value="@Guid.Empty">Выберите место</option>
+
+            @foreach (var place in places)
+            {
+                <option value="@place.Id">
+                    @(place.Name ?? $"Место {place.Id}")
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="d-flex justify-content-end mt-3">
+        <button class="btn btn-primary"
+                disabled="@IsGenerateDisabled"
+                @onclick="GenerateQrCode">
+            @(isGenerating ? "Генерация..." : "Сгенерировать QR код")
+        </button>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(message))
+    {
+        <div class="alert alert-success mt-3">
+            @message
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(error))
+    {
+        <div class="alert alert-danger mt-3">
+            @error
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(qrCodeImageSrc))
+    {
+        <div class="mt-4">
+            <h5>Сгенерированный QR код</h5>
+
+            <img src="@qrCodeImageSrc"
+                 alt="QR код места"
+                 style="width: 250px; height: 250px;" />
+        </div>
+    }
+}
+
+@code {
+    private readonly CancellationTokenSource cancellationTokenSource = new();
+
+    private List<PlaceApiModel> places = [];
+    private Guid selectedPlaceId = Guid.Empty;
+
+    private bool isLoading = true;
+    private bool isGenerating;
+
+    private string? message;
+    private string? error;
+    private string? qrCodeImageSrc;
+
+    private bool IsGenerateDisabled =>
+        isGenerating || selectedPlaceId == Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            places = (await TravelBotClient.PlaceGetAllAsync(cancellationTokenSource.Token))?.ToList()
+                     ?? [];
+        }
+        catch (ApiException ex) when (ex.StatusCode == 401)
+        {
+            NavigationManager.NavigateTo("/login", true);
+        }
+        catch (Exception ex)
+        {
+            error = $"Ошибка при загрузке мест: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task GenerateQrCode()
+    {
+        if (selectedPlaceId == Guid.Empty)
+            return;
+
+        message = null;
+        error = null;
+        qrCodeImageSrc = null;
+        isGenerating = true;
+
+        try
+        {
+            var response = await TravelBotClient.QrCodeGenerateForPlaceAsync(
+                selectedPlaceId,
+                cancellationTokenSource.Token);
+
+            using var memoryStream = new MemoryStream();
+            await response.Stream.CopyToAsync(memoryStream, cancellationTokenSource.Token);
+
+            var base64 = Convert.ToBase64String(memoryStream.ToArray());
+            qrCodeImageSrc = $"data:image/png;base64,{base64}";
+
+            message = "QR код успешно сгенерирован.";
+        }
+        catch (ApiException ex) when (ex.StatusCode == 401)
+        {
+            NavigationManager.NavigateTo("/login", true);
+        }
+        catch (Exception ex)
+        {
+            error = $"Ошибка при генерации QR кода: {ex.Message}";
+        }
+        finally
+        {
+            isGenerating = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        cancellationTokenSource.Cancel();
+        cancellationTokenSource.Dispose();
+    }
+}

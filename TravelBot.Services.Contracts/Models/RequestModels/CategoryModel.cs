@@ -1,15 +1,14 @@
 ﻿using TravelBot.Services.Contracts.Models.BaseModels;
 
-namespace TravelBot.Services.Contracts.Models.RequestModels
+namespace TravelBot.Services.Contracts.Models.RequestModels;
+
+/// <summary>
+///     Модель категории
+/// </summary>
+public class CategoryModel : CategoryBaseModel
 {
     /// <summary>
-    /// Модель категории
+    ///     Идентификатор
     /// </summary>
-    public class CategoryModel : CategoryBaseModel
-    {
-        /// <summary>
-        /// Идентификатор
-        /// </summary>
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

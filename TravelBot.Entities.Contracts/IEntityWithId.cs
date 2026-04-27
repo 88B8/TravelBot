@@ -1,13 +1,12 @@
-﻿namespace TravelBot.Entities.Contracts
+﻿namespace TravelBot.Entities.Contracts;
+
+/// <summary>
+///     Сущность с идентификатором
+/// </summary>
+public interface IEntityWithId
 {
     /// <summary>
-    /// Сущность с идентификатором
+    ///     Идентификатор
     /// </summary>
-    public interface IEntityWithId
-    {
-        /// <summary>
-        /// Идентификатор
-        /// </summary>
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

@@ -1,0 +1,119 @@
+@page "/User/Edit/{Id:guid}"
+@using Blazored.FluentValidation
+@using TravelBot.Api.Client.Client
+@using TravelBot.Web.Validators
+@inject ITravelBotApiClient TravelBotApiClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>Изменение пользователя</PageTitle>
+
+<h3>Изменение пользователя</h3>
+
+@if (isLoading)
+{
+    <p>Загрузка...</p>
+}
+else if (item == null)
+{
+    <p class="text-danger">Пользователь не найден.</p>
+}
+else
+{
+    <EditForm Model="item" OnValidSubmit="HandleSubmit">
+        <FluentValidationValidator Validator="validator"></FluentValidationValidator>
+
+        <div class="form-group mb-3">
+            <label for="Name">Имя пользователя:</label>
+            <InputText id="Name" @bind-Value="item.Name" class="form-control"/>
+            <ValidationMessage For="@(() => item.Name)"/>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="TelegramId">Телеграм ID:</label>
+            <InputNumber id="TelegramId" @bind-Value="item.TelegramId" class="form-control"/>
+            <ValidationMessage For="@(() => item.TelegramId)"/>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="PassportId">Паспорт:</label>
+            <select id="PassportId" class="form-select" @bind="item.PassportId">
+                <option value="">Выберите паспорт</option>
+                @foreach (var passport in passports)
+                {
+                    <option value="@passport.Id">Паспорт @passport.Id</option>
+                }
+            </select>
+            <ValidationMessage For="@(() => item.PassportId)"/>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-success">Сохранить</button>
+            <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Отмена</button>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private UserCreateApiModel? item;
+    private List<PassportApiModel> passports = [];
+    private readonly UserCreateApiModelValidator validator = new();
+    private bool isLoading = true;
+    private readonly CancellationTokenSource cancellationTokenSource = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            passports = (await TravelBotApiClient.PassportGetAllAsync(cancellationTokenSource.Token))?.ToList() 
+                        ?? [];
+
+            var existingUser = await TravelBotApiClient.UserGetByIdAsync(Id, cancellationTokenSource.Token);
+            if (existingUser != null)
+            {
+                item = new UserCreateApiModel
+                {
+                    Name = existingUser.Name,
+                    TelegramId = existingUser.TelegramId,
+                    PassportId = existingUser.Passport?.Id ?? Guid.Empty
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при загрузке пользователя: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (item == null) 
+            return;
+
+        var result = await validator.ValidateAsync(item);
+
+        if (result.IsValid)
+        {
+            try
+            {
+                await TravelBotApiClient.UserEditAsync(Id, item, cancellationTokenSource.Token);
+                NavigationManager.NavigateTo("/User");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при сохранении пользователя: {ex.Message}");
+            }
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/User");
+    }
+
+}

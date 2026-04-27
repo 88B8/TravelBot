@@ -1,14 +1,18 @@
-﻿using TravelBot.Services.Contracts.Auth;
+﻿using TravelBot.Services.Anchors;
+using TravelBot.Services.Contracts.Auth;
 
-namespace TravelBot.Services.Auth
+namespace TravelBot.Services.Auth;
+
+/// <inheritdoc cref="IPasswordHasher" />
+public class PasswordHasher : IPasswordHasher, IServiceAnchor
 {
-    /// <inheritdoc cref="IPasswordHasher"/>
-    public class PasswordHasher : IPasswordHasher, IServiceAnchor
+    string IPasswordHasher.Generate(string password)
     {
-        string IPasswordHasher.Generate(string password)
-            => BCrypt.Net.BCrypt.EnhancedHashPassword(password);
+        return BCrypt.Net.BCrypt.EnhancedHashPassword(password);
+    }
 
-        bool IPasswordHasher.Verify(string password, string passwordHash)
-            => BCrypt.Net.BCrypt.EnhancedVerify(password, passwordHash);
+    bool IPasswordHasher.Verify(string password, string passwordHash)
+    {
+        return BCrypt.Net.BCrypt.EnhancedVerify(password, passwordHash);
     }
 }

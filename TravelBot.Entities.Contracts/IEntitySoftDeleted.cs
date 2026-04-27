@@ -1,10 +1,9 @@
-﻿namespace TravelBot.Entities.Contracts
+﻿namespace TravelBot.Entities.Contracts;
+
+/// <summary>
+///     Сущность с мягким удалением
+/// </summary>
+public interface IEntitySoftDeleted
 {
-    /// <summary>
-    /// Сущность с мягким удалением
-    /// </summary>
-    public interface IEntitySoftDeleted
-    {
-        public DateTimeOffset? DeletedAt { get; set; }
-    }
+    public DateTimeOffset? DeletedAt { get; set; }
 }

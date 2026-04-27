@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35806.99
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Web", "TravelBot.Web\TravelBot.Web.csproj", "{EAD76961-D71D-4728-A492-98D448C03F79}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Api", "TravelBot.Api\TravelBot.Api.csproj", "{EAD76961-D71D-4728-A492-98D448C03F79}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -31,17 +31,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Services.Contract
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Services", "TravelBot.Services\TravelBot.Services.csproj", "{56B60B72-01C0-43B2-9426-2BC72AB58DC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Client", "TravelBot.Client\TravelBot.Client.csproj", "{99DCC264-7299-4178-856D-58C43ED457DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Web", "TravelBot.Web\TravelBot.Web.csproj", "{99DCC264-7299-4178-856D-58C43ED457DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Shared", "TravelBot.Shared\TravelBot.Shared.csproj", "{0E8B3638-F15D-4BD8-958D-BA62EE0D43B5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Client.Contracts", "TravelBot.Client.Contracts\TravelBot.Client.Contracts.csproj", "{5B601BB0-9279-49F6-8186-7EC5B221B6E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Api.Client", "TravelBot.Api.Client\TravelBot.Api.Client.csproj", "{5B601BB0-9279-49F6-8186-7EC5B221B6E0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Bot", "TravelBot.Bot\TravelBot.Bot.csproj", "{7CD74DF5-D1A8-44EC-8C15-3E789CBC26D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Services.Tests", "TravelBot.Services.Tests\TravelBot.Services.Tests.csproj", "{0EAE142E-97D6-47DD-8530-6B5E41174CB4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Context.Tests", "TravelBot.Context.Tests\TravelBot.Context.Tests.csproj", "{1B628E83-0C8F-40EF-AD6F-0815EBEB09AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Constants", "TravelBot.Constants\TravelBot.Constants.csproj", "{10B9CBC7-E4AE-4401-994E-306F3F78A44A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,10 +105,6 @@ Global
 		{99DCC264-7299-4178-856D-58C43ED457DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99DCC264-7299-4178-856D-58C43ED457DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99DCC264-7299-4178-856D-58C43ED457DF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0E8B3638-F15D-4BD8-958D-BA62EE0D43B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E8B3638-F15D-4BD8-958D-BA62EE0D43B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E8B3638-F15D-4BD8-958D-BA62EE0D43B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E8B3638-F15D-4BD8-958D-BA62EE0D43B5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5B601BB0-9279-49F6-8186-7EC5B221B6E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5B601BB0-9279-49F6-8186-7EC5B221B6E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B601BB0-9279-49F6-8186-7EC5B221B6E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -125,6 +121,10 @@ Global
 		{1B628E83-0C8F-40EF-AD6F-0815EBEB09AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B628E83-0C8F-40EF-AD6F-0815EBEB09AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B628E83-0C8F-40EF-AD6F-0815EBEB09AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10B9CBC7-E4AE-4401-994E-306F3F78A44A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10B9CBC7-E4AE-4401-994E-306F3F78A44A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10B9CBC7-E4AE-4401-994E-306F3F78A44A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10B9CBC7-E4AE-4401-994E-306F3F78A44A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

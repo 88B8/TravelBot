@@ -1,21 +1,20 @@
 ﻿using FluentValidation;
 using TravelBot.Services.Contracts.Models.CreateModels;
 
-namespace TravelBot.Services.Validators
+namespace TravelBot.Services.Validators;
+
+/// <summary>
+///     Валидация <see cref="PassportPlaceCreateModel" />
+/// </summary>
+public class PassportPlaceCreateModelValidator : AbstractValidator<PassportPlaceCreateModel>
 {
     /// <summary>
-    /// Валидация <see cref="PassportPlaceCreateModel"/>
+    ///     ctor
     /// </summary>
-    public class PassportPlaceCreateModelValidator : AbstractValidator<PassportPlaceCreateModel>
+    public PassportPlaceCreateModelValidator()
     {
-        /// <summary>
-        /// ctor
-        /// </summary>
-        public PassportPlaceCreateModelValidator()
-        {
-            RuleFor(x => x.PlaceId)
-                .NotEmpty()
-                .WithMessage("Идентификатор места обязателен");
-        }
+        RuleFor(x => x.PlaceId)
+            .NotEmpty()
+            .WithMessage("Идентификатор места обязателен");
     }
 }

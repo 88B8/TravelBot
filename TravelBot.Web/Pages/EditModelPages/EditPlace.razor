@@ -1,0 +1,146 @@
+﻿@page "/Place/Edit/{Id:guid}"
+@using Blazored.FluentValidation
+@using TravelBot.Api.Client.Client
+@using TravelBot.Web.Validators
+@inject ITravelBotApiClient TravelBotApiClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>Изменение места</PageTitle>
+
+<h3>Изменение места</h3>
+
+@if (isLoading)
+{
+    <p>Загрузка...</p>
+}
+else if (item == null)
+{
+    <p class="text-danger">Место не найдено.</p>
+}
+else
+{
+    <EditForm Model="item" OnValidSubmit="HandleSubmit">
+        <FluentValidationValidator Validator="validator"></FluentValidationValidator>
+
+        <div class="form-group">
+            <label for="Name">Название:</label>
+            <InputText id="Name" @bind-Value="item.Name" class="form-control"/>
+            <ValidationMessage For="@(() => item.Name)"/>
+        </div>
+
+        <div class="form-group">
+            <label for="CategoryId">Категория:</label>
+            <select id="CategoryId" class="form-control" @bind="item.CategoryId">
+                <option value="">Выберите категорию</option>
+                @foreach (var category in categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </select>
+            <ValidationMessage For="@(() => item.CategoryId)"/>
+        </div>
+
+        <div class="form-group">
+            <label for="Description">Описание:</label>
+            <InputText id="Description" @bind-Value="item.Description" class="form-control"/>
+            <ValidationMessage For="@(() => item.Description)"/>
+        </div>
+
+        <div class="form-check">
+            <InputCheckbox class="form-check-input" @bind-Value="item.ChildFriendly" id="ChildFriendly"/>
+            <label class="form-check-label" for="ChildFriendly">Можно с детьми</label>
+            <ValidationMessage For="@(() => item.ChildFriendly)"/>
+        </div>
+
+        <div class="form-group">
+            <label for="Metro">Метро:</label>
+            <InputText id="Metro" @bind-Value="item.Metro" class="form-control"/>
+            <ValidationMessage For="@(() => item.Metro)"/>
+        </div>
+
+        <div class="form-group">
+            <label for="Address">Адрес:</label>
+            <InputText id="Address" @bind-Value="item.Address" class="form-control"/>
+            <ValidationMessage For="@(() => item.Address)"/>
+        </div>
+
+        <div class="form-group">
+            <label for="Link">Ссылка:</label>
+            <InputText id="Link" @bind-Value="item.Link" class="form-control"/>
+            <ValidationMessage For="@(() => item.Link)"/>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-success">Сохранить</button>
+            <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Отмена</button>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private PlaceCreateApiModel? item;
+    private List<CategoryApiModel> categories = new();
+    private readonly PlaceCreateApiModelValidator validator = new();
+    private bool isLoading = true;
+    private readonly CancellationTokenSource cancellationTokenSource = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            categories = (await TravelBotApiClient.CategoryGetAllAsync(cancellationTokenSource.Token))?.ToList()
+                         ?? [];
+
+            var existingPlace = await TravelBotApiClient.PlaceGetByIdAsync(Id, cancellationTokenSource.Token);
+            if (existingPlace != null)
+            {
+                item = new PlaceCreateApiModel
+                {
+                    Name = existingPlace.Name,
+                    Address = existingPlace.Address,
+                    CategoryId = existingPlace.Category.Id,
+                    ChildFriendly = existingPlace.ChildFriendly,
+                    Description = existingPlace.Description,
+                    Link = existingPlace.Link,
+                    Metro = existingPlace.Metro
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при загрузке места: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (item == null) return;
+
+        var result = await validator.ValidateAsync(item);
+
+        if (result.IsValid)
+        {
+            try
+            {
+                await TravelBotApiClient.PlaceEditAsync(Id, item, cancellationTokenSource.Token);
+                NavigationManager.NavigateTo("/Place");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при сохранении места: {ex.Message}");
+            }
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/Place");
+    }
+
+}

@@ -1,21 +1,20 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TravelBot.Context.Contracts;
 
-namespace TravelBot.Context
+namespace TravelBot.Context;
+
+/// <summary>
+///     Расширение для <see cref="IServiceCollection" />
+/// </summary>
+public static class ContextExtensionsService
 {
     /// <summary>
-    /// Расширение для <see cref="IServiceCollection"/>
+    ///     Регистрирует контекст
     /// </summary>
-    public static class ContextExtensionsService
+    public static void RegisterContext(this IServiceCollection serviceCollection)
     {
-        /// <summary>
-        /// Регистрирует контекст
-        /// </summary>
-        public static void RegisterContext(this IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddScoped<IReader>(x => x.GetRequiredService<TravelBotContext>());
-            serviceCollection.AddScoped<IWriter>(x => x.GetRequiredService<TravelBotContext>());
-            serviceCollection.AddScoped<IUnitOfWork>(x => x.GetRequiredService<TravelBotContext>());
-        }
+        serviceCollection.AddScoped<IReader>(x => x.GetRequiredService<TravelBotContext>());
+        serviceCollection.AddScoped<IWriter>(x => x.GetRequiredService<TravelBotContext>());
+        serviceCollection.AddScoped<IUnitOfWork>(x => x.GetRequiredService<TravelBotContext>());
     }
 }

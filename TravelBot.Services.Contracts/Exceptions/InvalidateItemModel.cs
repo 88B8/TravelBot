@@ -1,33 +1,34 @@
-﻿namespace TravelBot.Services.Contracts.Exceptions
+﻿namespace TravelBot.Services.Contracts.Exceptions;
+
+/// <summary>
+///     Модель инвалидации запросов
+/// </summary>
+public class InvalidateItemModel
 {
     /// <summary>
-    /// Модель инвалидации запросов
+    ///     ctor
     /// </summary>
-    public class InvalidateItemModel
+    public InvalidateItemModel(string field, string message)
     {
-        /// <summary>
-        /// Имя инвалидного поля
-        /// </summary>
-        public string Field { get; }
+        Field = field;
+        Message = message;
+    }
 
-        /// <summary>
-        /// Сообщение инвалидации
-        /// </summary>
-        public string Message { get; }
+    /// <summary>
+    ///     Имя инвалидного поля
+    /// </summary>
+    public string Field { get; }
 
-        /// <summary>
-        /// ctor
-        /// </summary>
-        public InvalidateItemModel(string field, string message)
-        {
-            Field = field;
-            Message = message;
-        }
+    /// <summary>
+    ///     Сообщение инвалидации
+    /// </summary>
+    public string Message { get; }
 
-        /// <summary>
-        /// Создает <see cref="InvalidateItemModel"/>
-        /// </summary>
-        public static InvalidateItemModel New(string field, string message)
-            => new InvalidateItemModel(field, message);
+    /// <summary>
+    ///     Создает <see cref="InvalidateItemModel" />
+    /// </summary>
+    public static InvalidateItemModel New(string field, string message)
+    {
+        return new InvalidateItemModel(field, message);
     }
 }

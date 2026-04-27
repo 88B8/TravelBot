@@ -1,18 +1,17 @@
-﻿namespace TravelBot.Entities.Contracts
+﻿namespace TravelBot.Entities.Contracts;
+
+/// <summary>
+///     Сущность с полями аудита
+/// </summary>
+public interface IEntityWithAudit
 {
     /// <summary>
-    /// Сущность с полями аудита
+    ///     Дата создания
     /// </summary>
-    public interface IEntityWithAudit
-    {
-        /// <summary>
-        /// Дата создания
-        /// </summary>
-        public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
-        /// <summary>
-        /// Дата обновления
-        /// </summary>
-        public DateTimeOffset UpdatedAt { get; set; }
-    }
+    /// <summary>
+    ///     Дата обновления
+    /// </summary>
+    public DateTimeOffset UpdatedAt { get; set; }
 }

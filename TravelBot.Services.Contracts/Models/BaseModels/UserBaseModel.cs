@@ -1,20 +1,17 @@
-﻿using TravelBot.Services.Contracts.Models.Enums;
+﻿namespace TravelBot.Services.Contracts.Models.BaseModels;
 
-namespace TravelBot.Services.Contracts.Models.BaseModels
+/// <summary>
+///     Базовая модель пользователя
+/// </summary>
+public abstract class UserBaseModel
 {
     /// <summary>
-    /// Базовая модель пользователя
+    ///     Имя пользователя
     /// </summary>
-    public abstract class UserBaseModel
-    {
-        /// <summary>
-        /// Имя пользователя
-        /// </summary>
-        public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Телеграм идентификатор
-        /// </summary>
-        public long TelegramId { get; set; }
-    }
+    /// <summary>
+    ///     Телеграм идентификатор
+    /// </summary>
+    public long TelegramId { get; set; }
 }

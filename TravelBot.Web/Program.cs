@@ -1,84 +1,32 @@
-﻿using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.EntityFrameworkCore;
-using TravelBot.Context;
-using TravelBot.Services.Contracts.Models.Auth;
-using TravelBot.Web.Extensions;
-using TravelBot.Web.Infrastructure;
+using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using TravelBot.Api.Client.Client;
+using TravelBot.Api.Client.Services;
+using TravelBot.Web;
+using TravelBot.Web.Services;
 
-namespace TravelBot.Web;
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
 
-/// <summary>
-/// Точка входа
-/// </summary>
-public class Program
-{
-    private static void Main(string[] args)
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<IClientAuthService, ClientAuthService>();
+builder.Services.AddScoped<CustomAuthStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<CustomAuthStateProvider>());
+
+builder.Services.AddScoped(_ =>
+    new HttpClient
     {
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-        AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
-            
-        var builder = WebApplication.CreateBuilder(args);
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        BaseAddress = new Uri("https://localhost:7288/")
+    });
 
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("Policy", config =>
-            {
-                config.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            });
-        });
+builder.Services.AddScoped<ITravelBotApiClient>(sp =>
+{
+    var httpClient = sp.GetRequiredService<HttpClient>();
+    return new TravelBotApiClient("https://localhost:7288/", httpClient);
+});
 
-        builder.Services.AddDbContext<TravelBotContext>(options =>
-            options.UseNpgsql(connectionString)
-                .LogTo(Console.WriteLine));
-
-        builder.Services.RegisterDependencies();
-        builder.Services.AddApiAuthentication(builder.Configuration);
-        var controllers = builder.Services.AddControllers(opt =>
-        {
-            opt.Filters.Add<TravelBotExceptionFilter>();
-        });
-
-        if (builder.Environment.EnvironmentName == EnvironmentNames.Integration)
-        {
-            controllers.AddControllersAsServices();
-        }
-
-        builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
-        {
-            var baseDirectory = AppContext.BaseDirectory;
-            c.IncludeXmlComments(Path.Combine(baseDirectory, "TravelBot.Web.xml"));
-            c.IncludeXmlComments(Path.Combine(baseDirectory, "TravelBot.Entities.xml"));
-        });
-
-        var app = builder.Build();
-
-        app.UseCors("Policy");
-
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        app.UseHttpsRedirection();
-
-        app.UseCookiePolicy(new CookiePolicyOptions
-        {
-            MinimumSameSitePolicy = SameSiteMode.Strict,
-            HttpOnly = HttpOnlyPolicy.Always,
-            Secure = CookieSecurePolicy.Always,
-        });
-
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-        app.MapControllers();
-
-        app.Run();
-    }
-}
+await builder.Build().RunAsync();

@@ -1,9 +1,8 @@
-﻿namespace TravelBot.Services.Contracts.Models.BaseModels
+﻿namespace TravelBot.Services.Contracts.Models.BaseModels;
+
+/// <summary>
+///     Базовая модель сущности маршрут-место
+/// </summary>
+public abstract class RoutePlaceBaseModel
 {
-    /// <summary>
-    /// Базовая модель сущности маршрут-место
-    /// </summary>
-    public abstract class RoutePlaceBaseModel
-    {
-    }
 }

@@ -1,19 +1,18 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TravelBot.Common;
 
-namespace TravelBot.Repositories.Extensions
+namespace TravelBot.Repositories.Extensions;
+
+/// <summary>
+///     Расширение для <see cref="IServiceCollection" />
+/// </summary>
+public static class RepositoryExtensionsService
 {
     /// <summary>
-    /// Расширение для <see cref="IServiceCollection"/>
+    ///     Регистрация репозиториев в DI
     /// </summary>
-    public static class RepositoryExtensionsService
+    public static void RegisterRepositories(this IServiceCollection service)
     {
-        /// <summary>
-        /// Регистрация репозиториев в DI
-        /// </summary>
-        public static void RegisterRepositories(this IServiceCollection service)
-        {
-            service.RegistrationOnInterface<IRepositoryAnchor>(ServiceLifetime.Scoped);
-        }
+        service.RegistrationOnInterface<IRepositoryAnchor>(ServiceLifetime.Scoped);
     }
 }

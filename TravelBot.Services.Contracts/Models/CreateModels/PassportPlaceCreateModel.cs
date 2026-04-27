@@ -1,15 +1,14 @@
 ﻿using TravelBot.Services.Contracts.Models.BaseModels;
 
-namespace TravelBot.Services.Contracts.Models.CreateModels
+namespace TravelBot.Services.Contracts.Models.CreateModels;
+
+/// <summary>
+///     Модель создания и редактирования посещенного места
+/// </summary>
+public class PassportPlaceCreateModel : PassportPlaceBaseModel
 {
     /// <summary>
-    /// Модель создания и редактирования посещенного места
+    ///     Идентификатор места
     /// </summary>
-    public class PassportPlaceCreateModel : PassportPlaceBaseModel
-    {
-        /// <summary>
-        /// Идентификатор места
-        /// </summary>
-        public Guid PlaceId { get; set; }
-    }
+    public Guid PlaceId { get; set; }
 }

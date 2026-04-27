@@ -1,18 +1,21 @@
-﻿namespace TravelBot.Services.Contracts.Exceptions
+﻿namespace TravelBot.Services.Contracts.Exceptions;
+
+/// <summary>
+///     Базовый класс исключений
+/// </summary>
+public abstract class TravelBotException : Exception
 {
     /// <summary>
-    /// Базовый класс исключений
+    ///     ctor
     /// </summary>
-    public abstract class TravelBotException : Exception
+    protected TravelBotException()
     {
-        /// <summary>
-        /// ctor
-        /// </summary>
-        protected TravelBotException() { }
+    }
 
-        /// <summary>
-        /// ctor
-        /// </summary>
-        protected TravelBotException(string message) : base(message) { }
+    /// <summary>
+    ///     ctor
+    /// </summary>
+    protected TravelBotException(string message) : base(message)
+    {
     }
 }

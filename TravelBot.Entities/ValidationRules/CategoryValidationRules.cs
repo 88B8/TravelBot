@@ -1,18 +1,17 @@
-﻿namespace TravelBot.Entities.ValidationRules
+﻿namespace TravelBot.Entities.ValidationRules;
+
+/// <summary>
+///     Правила валидации <see cref="Category" />
+/// </summary>
+public static class CategoryValidationRules
 {
     /// <summary>
-    /// Правила валидации <see cref="Category"/>
+    ///     Минимальная длина имени категории
     /// </summary>
-    public static class CategoryValidationRules
-    {
-        /// <summary>
-        /// Минимальная длина имени категории
-        /// </summary>
-        public const int MinNameLength = 2;
+    public const int MinNameLength = 2;
 
-        /// <summary>
-        /// Максимальная длина имени категории
-        /// </summary>
-        public const int MaxNameLength = 100;
-    }
+    /// <summary>
+    ///     Максимальная длина имени категории
+    /// </summary>
+    public const int MaxNameLength = 100;
 }

@@ -1,28 +1,27 @@
-﻿namespace TravelBot.Services.Contracts.Models.Auth
+﻿namespace TravelBot.Services.Contracts.Models.Auth;
+
+/// <summary>
+///     Настройки Jwt
+/// </summary>
+public class JwtOptions
 {
     /// <summary>
-    /// Настройки Jwt
+    ///     Секретный ключ
     /// </summary>
-    public class JwtOptions
-    {
-        /// <summary>
-        /// Секретный ключ
-        /// </summary>
-        public string SecretKey { get; set; } = string.Empty;
+    public string SecretKey { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Издатель
-        /// </summary>
-        public string Issuer { get; set; } = string.Empty;
+    /// <summary>
+    ///     Издатель
+    /// </summary>
+    public string Issuer { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Аудитория
-        /// </summary>
-        public string Audience { get; set; } = string.Empty;
+    /// <summary>
+    ///     Аудитория
+    /// </summary>
+    public string Audience { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Истекает через
-        /// </summary>
-        public int ExpiresHours { get; set; }
-    }
+    /// <summary>
+    ///     Истекает через
+    /// </summary>
+    public int ExpiresHours { get; set; }
 }

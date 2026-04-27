@@ -1,21 +1,20 @@
-﻿namespace TravelBot.Services.Contracts.Exceptions
+﻿namespace TravelBot.Services.Contracts.Exceptions;
+
+/// <summary>
+///     Исключение валидации
+/// </summary>
+public class TravelBotValidationException : TravelBotException
 {
     /// <summary>
-    /// Исключение валидации
+    ///     ctor
     /// </summary>
-    public class TravelBotValidationException : TravelBotException
+    public TravelBotValidationException(IEnumerable<InvalidateItemModel> errors)
     {
-        /// <summary>
-        /// Ошибки
-        /// </summary>
-        public IEnumerable<InvalidateItemModel> Errors { get; }
-
-        /// <summary>
-        /// ctor
-        /// </summary>
-        public TravelBotValidationException(IEnumerable<InvalidateItemModel> errors)
-        {
-            Errors = errors;
-        }
+        Errors = errors;
     }
+
+    /// <summary>
+    ///     Ошибки
+    /// </summary>
+    public IEnumerable<InvalidateItemModel> Errors { get; }
 }

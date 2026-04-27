@@ -1,0 +1,109 @@
+﻿@page "/User"
+@inject ITravelBotApiClient TravelBotClient
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@using TravelBot.Api.Client.Client
+@implements IDisposable
+
+<PageTitle>Главная. Пользователи</PageTitle>
+
+<div>
+    <button class="btn btn-primary" @onclick="AddUser">
+        <i class="fas fa-plus"></i> Добавить пользователя
+    </button>
+</div>
+<hr/>
+
+@if (items.Count == 0)
+{
+    <p><em>Нет пользователей</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Имя пользователя</th>
+            <th>Телеграм ID</th>
+            <th>Паспорт</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in items)
+        {
+            <tr>
+                <td>@(item.Name ?? "(без имени)")</td>
+                <td>@(item.TelegramId.ToString())</td>
+                <td><a href="/Passport/@item.Passport.Id">Паспорт</a></td>
+                <td>
+                    <select class="form-control"
+                            @onchange="@(e => HandleActionSelection(item.Id, e.Value?.ToString()))">
+                        <option value="">Выберите действие</option>
+                        <option value="Edit">Изменить</option>
+                        <option value="Delete">Удалить</option>
+                    </select>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private readonly CancellationTokenSource cancellationTokenSource = new();
+    private ICollection<UserApiModel> items = new List<UserApiModel>();
+
+    private void AddUser()
+    {
+        NavigationManager.NavigateTo("/User/Create");
+    }
+
+    private async Task HandleActionSelection(Guid id, string? action)
+    {
+        if (string.IsNullOrEmpty(action))
+            return;
+
+        switch (action)
+        {
+            case "Edit":
+                NavigationManager.NavigateTo($"/User/Edit/{id}");
+                break;
+
+            case "Delete":
+                var confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Вы уверены, что хотите удалить этого пользователя?");
+                if (confirmed)
+                {
+                    await TravelBotClient.UserDeleteAsync(id, cancellationTokenSource.Token);
+                    var item = items.FirstOrDefault(x => x.Id == id);
+                    if (item != null)
+                    {
+                        items.Remove(item);
+                        StateHasChanged();
+                    }
+                }
+
+                break;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            items = await TravelBotClient.UserGetAllAsync(cancellationTokenSource.Token)
+                    ?? new List<UserApiModel>();
+        }
+        catch (ApiException ex) when (ex.StatusCode == 401)
+        {
+            NavigationManager.NavigateTo("/login", true);
+        }
+    }
+
+    public void Dispose()
+    {
+        cancellationTokenSource.Cancel();
+        cancellationTokenSource.Dispose();
+    }
+
+}

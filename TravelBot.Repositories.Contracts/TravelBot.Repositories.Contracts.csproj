@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TravelBot.Context.Contracts\TravelBot.Context.Contracts.csproj" />
-    <ProjectReference Include="..\TravelBot.Entities\TravelBot.Entities.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\TravelBot.Context.Contracts\TravelBot.Context.Contracts.csproj"/>
+        <ProjectReference Include="..\TravelBot.Entities\TravelBot.Entities.csproj"/>
+    </ItemGroup>
 
 </Project>

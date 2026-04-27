@@ -1,30 +1,29 @@
 ﻿using TravelBot.Entities.BaseModels;
 
-namespace TravelBot.Entities
+namespace TravelBot.Entities;
+
+/// <summary>
+///     Модель пользователя
+/// </summary>
+public class User : BaseAuditEntity
 {
     /// <summary>
-    /// Модель пользователя
+    ///     Имя пользователя
     /// </summary>
-    public class User : BaseAuditEntity
-    {
-        /// <summary>
-        /// Имя пользователя
-        /// </summary>
-        public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Телеграм идентификатор
-        /// </summary>
-        public long TelegramId { get; set; }
+    /// <summary>
+    ///     Телеграм идентификатор
+    /// </summary>
+    public long TelegramId { get; set; }
 
-        /// <summary>
-        /// Идентификатор паспорта
-        /// </summary>
-        public Guid PassportId { get; set; }
-        
-        /// <summary>
-        /// Навигационное свойство паспорта
-        /// </summary>
-        public Passport Passport { get; set; } = null!;
-    }
+    /// <summary>
+    ///     Идентификатор паспорта
+    /// </summary>
+    public Guid PassportId { get; set; }
+
+    /// <summary>
+    ///     Навигационное свойство паспорта
+    /// </summary>
+    public Passport Passport { get; set; } = null!;
 }

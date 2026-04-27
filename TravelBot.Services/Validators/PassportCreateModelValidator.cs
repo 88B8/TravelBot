@@ -1,19 +1,17 @@
 ﻿using FluentValidation;
 using TravelBot.Services.Contracts.Models.CreateModels;
 
-namespace TravelBot.Services.Validators
+namespace TravelBot.Services.Validators;
+
+/// <summary>
+///     Валидация <see cref="PassportCreateModel" />
+/// </summary>
+public class PassportCreateModelValidator : AbstractValidator<PassportCreateModel>
 {
     /// <summary>
-    /// Валидация <see cref="PassportCreateModel"/>
+    ///     ctor
     /// </summary>
-    public class PassportCreateModelValidator : AbstractValidator<PassportCreateModel>
+    public PassportCreateModelValidator()
     {
-        /// <summary>
-        /// ctor
-        /// </summary>
-        public PassportCreateModelValidator()
-        {
-
-        }
     }
 }

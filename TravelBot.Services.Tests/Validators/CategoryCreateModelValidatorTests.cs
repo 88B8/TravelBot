@@ -2,93 +2,92 @@ using FluentValidation.TestHelper;
 using TravelBot.Services.Contracts.Models.CreateModels;
 using TravelBot.Services.Validators;
 
-namespace TravelBot.Services.Tests.Validators
+namespace TravelBot.Services.Tests.Validators;
+
+/// <summary>
+///     Тесты для <see cref="CategoryCreateModelValidator" />
+/// </summary>
+public class CategoryCreateModelValidatorTests
 {
-    /// <summary>
-    /// Тесты для <see cref="CategoryCreateModelValidator"/>
-    /// </summary>
-    public class CategoryCreateModelValidatorTests
+    private readonly CategoryCreateModelValidator validator = new();
+
+    [Fact]
+    public void ShouldHaveErrorWhenNameIsEmpty()
     {
-        private readonly CategoryCreateModelValidator validator = new();
-
-        [Fact]
-        public void ShouldHaveErrorWhenNameIsEmpty()
+        // Arrange
+        var model = new CategoryCreateModel
         {
-            // Arrange
-            var model = new CategoryCreateModel
-            {
-                Name = string.Empty
-            };
+            Name = string.Empty
+        };
 
-            // Act
-            var result = validator.TestValidate(model);
+        // Act
+        var result = validator.TestValidate(model);
 
-            // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Name);
-        }
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Name);
+    }
 
-        [Fact]
-        public void ShouldHaveErrorWhenNameIsWhitespace()
+    [Fact]
+    public void ShouldHaveErrorWhenNameIsWhitespace()
+    {
+        // Arrange
+        var model = new CategoryCreateModel
         {
-            // Arrange
-            var model = new CategoryCreateModel
-            {
-                Name = "   "
-            };
+            Name = "   "
+        };
 
-            // Act
-            var result = validator.TestValidate(model);
+        // Act
+        var result = validator.TestValidate(model);
 
-            // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Name);
-        }
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Name);
+    }
 
-        [Fact]
-        public void ShouldHaveErrorWhenNameIsTooShort()
+    [Fact]
+    public void ShouldHaveErrorWhenNameIsTooShort()
+    {
+        // Arrange
+        var model = new CategoryCreateModel
         {
-            // Arrange
-            var model = new CategoryCreateModel
-            {
-                Name = "a"
-            };
+            Name = "a"
+        };
 
-            // Act
-            var result = validator.TestValidate(model);
+        // Act
+        var result = validator.TestValidate(model);
 
-            // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Name);
-        }
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Name);
+    }
 
-        [Fact]
-        public void ShouldHaveErrorWhenNameIsTooLong()
+    [Fact]
+    public void ShouldHaveErrorWhenNameIsTooLong()
+    {
+        // Arrange
+        var model = new CategoryCreateModel
         {
-            // Arrange
-            var model = new CategoryCreateModel
-            {
-                Name = new string('a', 256)
-            };
+            Name = new string('a', 256)
+        };
 
-            // Act
-            var result = validator.TestValidate(model);
+        // Act
+        var result = validator.TestValidate(model);
 
-            // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Name);
-        }
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Name);
+    }
 
-        [Fact]
-        public void ShouldNotHaveErrorsWhenModelIsValid()
+    [Fact]
+    public void ShouldNotHaveErrorsWhenModelIsValid()
+    {
+        // Arrange
+        var model = new CategoryCreateModel
         {
-            // Arrange
-            var model = new CategoryCreateModel
-            {
-                Name = "Museums"
-            };
+            Name = "Museums"
+        };
 
-            // Act
-            var result = validator.TestValidate(model);
+        // Act
+        var result = validator.TestValidate(model);
 
-            // Assert
-            result.ShouldNotHaveAnyValidationErrors();
-        }
+        // Assert
+        result.ShouldNotHaveAnyValidationErrors();
     }
 }

@@ -1,0 +1,113 @@
+﻿@page "/Place"
+@using TravelBot.Api.Client.Client
+@inject ITravelBotApiClient TravelBotClient
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+<PageTitle>Главная. Места</PageTitle>
+
+<div>
+    <button class="btn btn-primary" @onclick="AddPlace">
+        <i class="fas fa-plus"></i> Добавить место
+    </button>
+</div>
+<hr/>
+
+@if (items.Count == 0)
+{
+    <p><em>Нет категорий</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Название</th>
+            <th>Категория</th>
+            <th>Описание</th>
+            <th>Можно с детьми</th>
+            <th>Метро</th>
+            <th>Адрес</th>
+            <th>Ссылка</th>
+            <th>Действие</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in items)
+        {
+            <tr>
+                <td>@(item.Name ?? "(без названия)")</td>
+                <td>@(item.Category.Name ?? "(нет категории)")</td>
+                <td>@(item.Description ?? "(нет описания)")</td>
+                <td>@(item.ChildFriendly ? "да" : "нет")</td>
+                <td>@(item.Metro ?? "(нет адреса)")</td>
+                <td>@(item.Address ?? "(нет адреса)")</td>
+                <td>@(item.Link ?? "(нет адреса)")</td>
+                <td>
+                    <select class="form-control"
+                            @onchange="@(e => HandleActionSelection(item.Id, e.Value?.ToString()))">
+                        <option value="">Выберите действие</option>
+                        <option value="Edit">Изменить</option>
+                        <option value="Delete">Удалить</option>
+                    </select>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private readonly CancellationTokenSource cancellationTokenSource = new();
+    private ICollection<PlaceApiModel> items = new List<PlaceApiModel>();
+
+    private void AddPlace()
+    {
+        NavigationManager.NavigateTo("/Place/Create");
+    }
+
+    private async Task HandleActionSelection(Guid id, string? action)
+    {
+        if (string.IsNullOrEmpty(action))
+        {
+            return;
+        }
+
+        switch (action)
+        {
+            case "Edit":
+                NavigationManager.NavigateTo($"/Place/Edit/{id}");
+                break;
+
+            case "Delete":
+                var confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Вы уверены, что хотите удалить это место?");
+                if (confirmed)
+                {
+                    await TravelBotClient.PlaceDeleteAsync(id, cancellationTokenSource.Token);
+                    var item = items.FirstOrDefault(x => x.Id == id);
+
+                    if (item != null)
+                    {
+                        items.Remove(item);
+                        StateHasChanged();
+                    }
+                }
+
+                break;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try 
+        {
+            items = await TravelBotClient.PlaceGetAllAsync(cancellationTokenSource.Token)
+                    ?? new List<PlaceApiModel>();
+        }
+        catch (ApiException ex) when (ex.StatusCode == 401)
+        {
+            NavigationManager.NavigateTo("/login", true);
+        }
+    }
+
+}
