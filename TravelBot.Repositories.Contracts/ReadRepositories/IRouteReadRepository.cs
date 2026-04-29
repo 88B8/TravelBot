@@ -19,6 +19,11 @@ public interface IRouteReadRepository
     Task<Route?> GetByIdRaw(Guid id, CancellationToken cancellationToken);
 
     /// <summary>
+    ///     Получить список всех активных <see cref="RouteDbModel" />
+    /// </summary>
+    Task<IReadOnlyCollection<RouteDbModel>> GetAllActive(CancellationToken cancellationToken);
+    
+    /// <summary>
     ///     Получить список всех <see cref="RouteDbModel" />
     /// </summary>
     Task<IReadOnlyCollection<RouteDbModel>> GetAll(CancellationToken cancellationToken);

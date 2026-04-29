@@ -44,7 +44,7 @@ public class RouteService : IRouteService, IServiceAnchor
         var placeIds = places.Select(x => x.Id);
 
         var missingIds = model.PlaceIds.Except(placeIds).ToList();
-        if (missingIds.Any())
+        if (missingIds.Count != 0)
             throw new TravelBotNotFoundException(
                 $"Не удалось найти места с идентификатором {string.Join(", ", missingIds)}");
 
@@ -53,7 +53,8 @@ public class RouteService : IRouteService, IServiceAnchor
             AverageTime = model.AverageTime,
             Budget = model.Budget,
             ReasonToVisit = model.ReasonToVisit,
-            StartPoint = model.StartPoint
+            StartPoint = model.StartPoint,
+            IsActive = model.IsActive,
         };
 
         routeWriteRepository.Add(item);
@@ -95,7 +96,7 @@ public class RouteService : IRouteService, IServiceAnchor
         var placeIds = places.Select(x => x.Id);
         var missingIds = model.PlaceIds.Except(placeIds).ToList();
 
-        if (missingIds.Any())
+        if (missingIds.Count != 0)
             throw new TravelBotNotFoundException(
                 $"Не удалось найти места с идентификатором {string.Join(", ", missingIds)}");
 
@@ -137,6 +138,13 @@ public class RouteService : IRouteService, IServiceAnchor
         var items = await routeReadRepository.GetAll(cancellationToken);
 
         return mapper.Map<IReadOnlyCollection<RouteModel>>(items);
+    }
+
+    async Task<IReadOnlyCollection<RouteModel>> IRouteService.GetAllActive(CancellationToken cancellationToken)
+    {
+        var items = await routeReadRepository.GetAllActive(cancellationToken);
+
+        return mapper.Map<IReadOnlyCollection<RouteModel>>(items);    
     }
 
     async Task<RouteModel> IRouteService.GetById(Guid id, CancellationToken cancellationToken)

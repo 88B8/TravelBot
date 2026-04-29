@@ -25,7 +25,7 @@ public sealed class BotService : BackgroundService
     private readonly ILogger<BotService> logger;
 
     private readonly ConcurrentDictionary<long, RegistrationState> registrationStates = new();
-    
+
     /// <summary>
     /// ctor
     /// </summary>
@@ -155,7 +155,7 @@ public sealed class BotService : BackgroundService
             return;
         }
 
-        var existingUser = await GetUserByTelegramId(telegramId, cancellationToken);
+        var existingUser = await TryGetUserByTelegramId(telegramId, cancellationToken);
 
         if (existingUser is null)
         {
@@ -221,7 +221,7 @@ public sealed class BotService : BackgroundService
 
     private async Task ShowRoutes(long telegramId, CancellationToken cancellationToken)
     {
-        var routes = await apiClient.RouteGetAllAsync(cancellationToken);
+        var routes = await apiClient.RouteGetAllActiveAsync(cancellationToken);
 
         if (routes.Count == 0)
         {
@@ -252,7 +252,7 @@ public sealed class BotService : BackgroundService
 
     private async Task ShowPassport(long telegramId, CancellationToken cancellationToken)
     {
-        var user = await GetUserByTelegramId(telegramId, cancellationToken);
+        var user = await TryGetUserByTelegramId(telegramId, cancellationToken);
 
         if (user is null)
         {
@@ -288,7 +288,7 @@ public sealed class BotService : BackgroundService
 
     private async Task AddPlaceToPassport(long telegramId, Guid placeId, CancellationToken cancellationToken)
     {
-        var user = await GetUserByTelegramId(telegramId, cancellationToken);
+        var user = await TryGetUserByTelegramId(telegramId, cancellationToken);
 
         if (user is null)
         {
@@ -349,22 +349,18 @@ public sealed class BotService : BackgroundService
             cancellationToken);
     }
 
-    private async Task<UserApiModel?> GetUserByTelegramId(long telegramId, CancellationToken cancellationToken)
+    private async Task<UserApiModel?> TryGetUserByTelegramId(
+        long telegramId,
+        CancellationToken cancellationToken)
     {
-        var users = await apiClient.UserGetAllAsync(cancellationToken);
-
-        return users.FirstOrDefault(user =>
+        try
         {
-            var value = GetValue(user, "TelegramId");
-
-            return value switch
-            {
-                long longValue => longValue == telegramId,
-                int intValue => intValue == telegramId,
-                string stringValue => stringValue == telegramId.ToString(),
-                _ => false
-            };
-        });
+            return await apiClient.UserGetByTelegramIdAsync(telegramId, cancellationToken);
+        }
+        catch (ApiException exception) when (exception.StatusCode == 404)
+        {
+            return null;
+        }
     }
 
     private async Task<PlaceApiModel?> TryGetPlace(Guid placeId, CancellationToken cancellationToken)
@@ -381,7 +377,7 @@ public sealed class BotService : BackgroundService
 
     private async Task<bool> IsUserRegistered(long telegramId, CancellationToken cancellationToken)
     {
-        return await GetUserByTelegramId(telegramId, cancellationToken) is not null;
+        return await TryGetUserByTelegramId(telegramId, cancellationToken) is not null;
     }
 
     private async Task SendHelp(long telegramId, CancellationToken cancellationToken)
@@ -555,7 +551,7 @@ public sealed class BotService : BackgroundService
 
         property.SetValue(target, value);
     }
-    
+
     private static string? GetSeasonName(SeasonApiModel season)
     {
         return season switch

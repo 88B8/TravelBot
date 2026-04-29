@@ -29,6 +29,15 @@ public class RouteReadRepository : IRouteReadRepository, IRepositoryAnchor
             .ToReadOnlyCollectionAsync(cancellationToken);
     }
 
+    Task<IReadOnlyCollection<RouteDbModel>> IRouteReadRepository.GetAllActive(CancellationToken cancellationToken)
+    {
+        return reader.Read<Route>()
+            .NotDeletedAt()
+            .Where(x => x.IsActive)
+            .SelectRouteDbModel()
+            .ToReadOnlyCollectionAsync(cancellationToken);
+    }
+
     Task<RouteDbModel?> IRouteReadRepository.GetById(Guid id, CancellationToken cancellationToken)
     {
         return reader.Read<Route>()

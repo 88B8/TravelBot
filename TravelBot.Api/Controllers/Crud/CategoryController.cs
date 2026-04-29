@@ -37,6 +37,7 @@ public class CategoryController : ControllerBase
     ///     Получает категорию по идентификатору
     /// </summary>
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(CategoryApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "CategoryGetById")]
@@ -51,6 +52,7 @@ public class CategoryController : ControllerBase
     ///     Получает список всех категорий
     /// </summary>
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(IReadOnlyCollection<CategoryApiModel>), StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "CategoryGetAll")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
@@ -64,6 +66,7 @@ public class CategoryController : ControllerBase
     ///     Добавляет новую категорию
     /// </summary>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(CategoryApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
     [SwaggerOperation(OperationId = "CategoryCreate")]
@@ -80,6 +83,7 @@ public class CategoryController : ControllerBase
     ///     Редактирует категорию по идентификатору
     /// </summary>
     [HttpPut]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(CategoryApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
@@ -97,6 +101,7 @@ public class CategoryController : ControllerBase
     ///     Удаляет категорию по идентификатору
     /// </summary>
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "CategoryDelete")]

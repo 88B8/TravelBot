@@ -37,6 +37,7 @@ public class AdminController : ControllerBase
     ///     Получает администратора по идентификатору
     /// </summary>
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = "Owner")]
     [ProducesResponseType(typeof(AdminApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "AdminGetById")]
@@ -51,6 +52,7 @@ public class AdminController : ControllerBase
     ///     Получает список всех администраторов
     /// </summary>
     [HttpGet]
+    [Authorize(Roles = "Owner")]
     [ProducesResponseType(typeof(IReadOnlyCollection<AdminApiModel>), StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "AdminGetAll")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
@@ -64,6 +66,7 @@ public class AdminController : ControllerBase
     ///     Добавляет нового администратора
     /// </summary>
     [HttpPost]
+    [Authorize(Roles = "Owner")]
     [ProducesResponseType(typeof(AdminApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
     [SwaggerOperation(OperationId = "AdminCreate")]
@@ -80,6 +83,7 @@ public class AdminController : ControllerBase
     ///     Редактирует администратора по идентификатору
     /// </summary>
     [HttpPut]
+    [Authorize(Roles = "Owner")]
     [ProducesResponseType(typeof(AdminApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
@@ -97,6 +101,7 @@ public class AdminController : ControllerBase
     ///     Удаляет администратора по идентификатору
     /// </summary>
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Owner")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "AdminDelete")]

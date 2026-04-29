@@ -37,6 +37,7 @@ public class RouteController : ControllerBase
     ///     Получает маршрут по идентификатору
     /// </summary>
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(RouteApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "RouteGetById")]
@@ -51,7 +52,7 @@ public class RouteController : ControllerBase
     ///     Получает список всех маршрутов
     /// </summary>
     [HttpGet]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(IReadOnlyCollection<RouteApiModel>), StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "RouteGetAll")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
@@ -62,9 +63,24 @@ public class RouteController : ControllerBase
     }
 
     /// <summary>
+    ///     Получает список всех активных маршрутов
+    /// </summary>
+    [HttpGet("active")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(IReadOnlyCollection<RouteApiModel>), StatusCodes.Status200OK)]
+    [SwaggerOperation(OperationId = "RouteGetAllActive")]
+    public async Task<IActionResult> GetAllActive(CancellationToken cancellationToken)
+    {
+        var result = await routeService.GetAllActive(cancellationToken);
+
+        return Ok(mapper.Map<IReadOnlyCollection<RouteApiModel>>(result));
+    }
+
+    /// <summary>
     ///     Добавляет новый маршрут
     /// </summary>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(RouteApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
     [SwaggerOperation(OperationId = "RouteCreate")]
@@ -81,6 +97,7 @@ public class RouteController : ControllerBase
     ///     Редактирует маршрут по идентификатору
     /// </summary>
     [HttpPut]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(RouteApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
@@ -98,6 +115,7 @@ public class RouteController : ControllerBase
     ///     Удаляет маршрут по идентификатору
     /// </summary>
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "RouteDelete")]

@@ -22,6 +22,7 @@ else
 	<table class="table table-striped">
 		<thead>
 		<tr>
+			<th>Активный</th>
 			<th>Почему стоит посетить</th>
 			<th>Отправная точка</th>
 			<th>Сезон</th>
@@ -35,6 +36,7 @@ else
 		@foreach (var item in items)
 		{
 			<tr>
+				<td>@(item.IsActive ? "да" : "нет")</td>
 				<td>@(item.ReasonToVisit ?? "нет причины")</td>
 				<td>@(item.StartPoint ?? "нет отправной точки")</td>
 				<td>@(GetSeasonName(item.Season) ?? "нет сезона")</td>

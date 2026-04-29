@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -35,48 +34,33 @@ public class UserController : ControllerBase
     }
 
     /// <summary>
-    ///     Получает текущего пользователя
-    /// </summary>
-    [HttpGet("me")]
-    [Authorize(Roles = "User,Admin")]
-    [ProducesResponseType(typeof(UserApiModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [SwaggerOperation(OperationId = "UserGetMe")]
-    public async Task<IActionResult> GetMe(CancellationToken cancellationToken)
-    {
-        var currentUserId = GetCurrentUserId();
-
-        if (currentUserId is null)
-            return Unauthorized();
-
-        var result = await userService.GetById(currentUserId.Value, cancellationToken);
-
-        return Ok(mapper.Map<UserApiModel>(result));
-    }
-
-    /// <summary>
     ///     Получает пользователя по идентификатору
     /// </summary>
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = "User,Admin")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(UserApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "UserGetById")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        if (!User.IsInRole("Admin"))
-        {
-            var currentUserId = GetCurrentUserId();
-
-            if (currentUserId is null)
-                return Unauthorized();
-
-            if (currentUserId.Value != id)
-                return Forbid();
-        }
-
         var result = await userService.GetById(id, cancellationToken);
+
+        return Ok(mapper.Map<UserApiModel>(result));
+    }
+
+    /// <summary>
+    ///     Получает пользователя по идентификатору телеграм
+    /// </summary>
+    [HttpGet("by-telegram/{telegramId:long}")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(UserApiModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
+    [SwaggerOperation(OperationId = "UserGetByTelegramId")]
+    public async Task<IActionResult> GetByTelegramId(long telegramId, CancellationToken cancellationToken)
+    {
+        var result = await userService.GetByTelegramId(telegramId, cancellationToken);
 
         return Ok(mapper.Map<UserApiModel>(result));
     }
@@ -126,17 +110,6 @@ public class UserController : ControllerBase
     [SwaggerOperation(OperationId = "UserEdit")]
     public async Task<IActionResult> Edit(Guid id, UserCreateApiModel request, CancellationToken cancellationToken)
     {
-        if (!User.IsInRole("Admin"))
-        {
-            var currentUserId = GetCurrentUserId();
-
-            if (currentUserId is null)
-                return Unauthorized();
-
-            if (currentUserId.Value != id)
-                return Forbid();
-        }
-
         var createModel = mapper.Map<UserCreateModel>(request);
 
         await validateService.Validate(createModel, cancellationToken);
@@ -159,15 +132,5 @@ public class UserController : ControllerBase
         await userService.Delete(id, cancellationToken);
 
         return Ok();
-    }
-
-    private Guid? GetCurrentUserId()
-    {
-        var value = User.FindFirstValue("userid")
-            ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        return Guid.TryParse(value, out var userId)
-            ? userId
-            : null;
     }
 }

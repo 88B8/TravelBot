@@ -117,9 +117,6 @@ namespace TravelBot.Context.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateOnly>("VisitedAt")
-                        .HasColumnType("date");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PassportId");
@@ -201,6 +198,9 @@ namespace TravelBot.Context.Migrations
 
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("ReasonToVisit")
                         .IsRequired()

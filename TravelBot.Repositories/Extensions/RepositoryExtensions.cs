@@ -39,6 +39,7 @@ public static class RepositoryExtensions
             ReasonToVisit = x.ReasonToVisit,
             Season = x.Season,
             StartPoint = x.StartPoint,
+            IsActive = x.IsActive,
             Places = x.RoutePlaces
                 .Where(y => y.DeletedAt == null)
                 .Select(y => new PlaceDbModel

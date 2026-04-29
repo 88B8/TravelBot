@@ -32,6 +32,11 @@ public class Route : BaseAuditEntity
     ///     Среднее время
     /// </summary>
     public int AverageTime { get; set; }
+    
+    /// <summary>
+    /// Флаг активности
+    /// </summary>
+    public bool IsActive { get; set; }
 
     /// <summary>
     ///     Навигационное свойство

@@ -33,6 +33,11 @@ public class RouteDbModel
     public string Budget { get; set; } = string.Empty;
 
     /// <summary>
+    /// Флаг активности
+    /// </summary>
+    public bool IsActive { get; set; }
+    
+    /// <summary>
     ///     Среднее время
     /// </summary>
     public int AverageTime { get; set; }

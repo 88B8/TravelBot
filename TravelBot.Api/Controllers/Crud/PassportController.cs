@@ -37,6 +37,7 @@ public class PassportController : ControllerBase
     ///     Получает паспорт по идентификатору
     /// </summary>
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(PassportApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "PassportGetById")]
@@ -51,6 +52,7 @@ public class PassportController : ControllerBase
     ///     Получает список всех паспортов
     /// </summary>
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(IReadOnlyCollection<PassportApiModel>), StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "PassportGetAll")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
@@ -64,6 +66,7 @@ public class PassportController : ControllerBase
     ///     Добавляет новый паспорт
     /// </summary>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(PassportApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
     [SwaggerOperation(OperationId = "PassportCreate")]
@@ -80,6 +83,7 @@ public class PassportController : ControllerBase
     ///     Редактирует паспорт по идентификатору
     /// </summary>
     [HttpPut]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(PassportApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
@@ -97,6 +101,7 @@ public class PassportController : ControllerBase
     ///     Удаляет паспорт по идентификатору
     /// </summary>
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "PassportDelete")]

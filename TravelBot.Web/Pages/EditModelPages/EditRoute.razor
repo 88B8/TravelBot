@@ -47,7 +47,11 @@ else
 
         <div class="form-group mb-3">
             <label for="Budget">Бюджет:</label>
-            <InputText id="Budget" class="form-control" @bind-Value="item.Budget"/>
+            <InputText id="Budget"
+                       class="form-control"
+                       @bind-Value="item.Budget"
+                       placeholder="Например: 0-500"
+                       title="Введите диапазон бюджета в формате мин-макс" />
             <ValidationMessage For="@(() => item.Budget)"/>
         </div>
 
@@ -94,6 +98,15 @@ else
             </div>
         </div>
 
+        <div class="form-group mb-3">
+            <div class="form-check">
+                <InputCheckbox id="IsActive" class="form-check-input" @bind-Value="item.IsActive" />
+                <label class="form-check-label" for="IsActive">
+                    Активный маршрут
+                </label>
+            </div>
+        </div>
+        
         <div class="d-flex justify-content-end mt-3">
             <button type="submit" class="btn btn-success">Сохранить</button>
             <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">Отмена</button>
@@ -106,7 +119,7 @@ else
 
     private RouteCreateApiModel? item;
     private readonly RouteCreateApiModelValidator validator = new();
-    private List<PlaceApiModel> allPlaces = new();
+    private List<PlaceApiModel> allPlaces = [];
     private string? selectedPlaceId;
     private bool isLoading = true;
     private readonly CancellationTokenSource cancellationTokenSource = new();
@@ -127,6 +140,7 @@ else
                     Season = route.Season,
                     Budget = route.Budget,
                     AverageTime = route.AverageTime,
+                    IsActive = route.IsActive,
                     PlaceIds = route.Places?.Select(p => p.Id).ToList() ?? []
                 };
             }

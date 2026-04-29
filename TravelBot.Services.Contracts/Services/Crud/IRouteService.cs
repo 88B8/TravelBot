@@ -12,6 +12,11 @@ public interface IRouteService
     ///     Возвращает список всех <see cref="RouteModel" />
     /// </summary>
     Task<IReadOnlyCollection<RouteModel>> GetAll(CancellationToken cancellationToken);
+    
+    /// <summary>
+    ///     Возвращает список всех активных <see cref="RouteModel" />
+    /// </summary>
+    Task<IReadOnlyCollection<RouteModel>> GetAllActive(CancellationToken cancellationToken);
 
     /// <summary>
     ///     Возвращает <see cref="RouteModel" /> по идентификатору

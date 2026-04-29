@@ -37,6 +37,7 @@ public class PlaceController : ControllerBase
     ///     Получает место по идентификатору
     /// </summary>
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(PlaceApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "PlaceGetById")]
@@ -51,6 +52,7 @@ public class PlaceController : ControllerBase
     ///     Получает список всех мест
     /// </summary>
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlaceApiModel>), StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "PlaceGetAll")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
@@ -64,6 +66,7 @@ public class PlaceController : ControllerBase
     ///     Добавляет новое место
     /// </summary>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(PlaceApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
     [SwaggerOperation(OperationId = "PlaceCreate")]
@@ -80,6 +83,7 @@ public class PlaceController : ControllerBase
     ///     Редактирует место по идентификатору
     /// </summary>
     [HttpPut]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(PlaceApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
@@ -97,6 +101,7 @@ public class PlaceController : ControllerBase
     ///     Удаляет место по идентификатору
     /// </summary>
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "PlaceDelete")]
