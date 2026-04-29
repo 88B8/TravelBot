@@ -11,4 +11,9 @@ public interface IJwtProvider
     ///     Генерирует токен
     /// </summary>
     string GenerateToken(AdminModel admin);
+    
+    /// <summary>
+    /// Генерирует токен для пользователя
+    /// </summary>
+    string GenerateToken(UserModel user);
 }

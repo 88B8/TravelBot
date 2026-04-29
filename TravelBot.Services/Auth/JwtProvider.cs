@@ -25,7 +25,22 @@ public class JwtProvider : IJwtProvider, IServiceAnchor
 
     string IJwtProvider.GenerateToken(AdminModel admin)
     {
-        Claim[] claims = [new("userid", admin.Id.ToString())];
+        return GenerateToken(admin.Id, "Admin");
+    }
+
+    string IJwtProvider.GenerateToken(UserModel user)
+    {
+        return GenerateToken(user.Id, "User");
+    }
+
+    private string GenerateToken(Guid userId, string role)
+    {
+        Claim[] claims =
+        [
+            new("userid", userId.ToString()),
+            new(ClaimTypes.NameIdentifier, userId.ToString()),
+            new(ClaimTypes.Role, role)
+        ];
 
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SecretKey)),
@@ -36,8 +51,6 @@ public class JwtProvider : IJwtProvider, IServiceAnchor
             signingCredentials: signingCredentials,
             expires: DateTime.UtcNow.AddHours(options.ExpiresHours));
 
-        var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
-
-        return tokenValue;
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

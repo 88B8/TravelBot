@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -22,9 +23,9 @@ public class UserController : ControllerBase
     private readonly IMapper mapper;
     private readonly IUserService userService;
     private readonly IValidateService validateService;
-
+    
     /// <summary>
-    ///     ctor
+    /// ctor
     /// </summary>
     public UserController(IUserService userService, IValidateService validateService, IMapper mapper)
     {
@@ -34,15 +35,47 @@ public class UserController : ControllerBase
     }
 
     /// <summary>
+    ///     Получает текущего пользователя
+    /// </summary>
+    [HttpGet("me")]
+    [Authorize(Roles = "User,Admin")]
+    [ProducesResponseType(typeof(UserApiModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [SwaggerOperation(OperationId = "UserGetMe")]
+    public async Task<IActionResult> GetMe(CancellationToken cancellationToken)
+    {
+        var currentUserId = GetCurrentUserId();
+
+        if (currentUserId is null)
+            return Unauthorized();
+
+        var result = await userService.GetById(currentUserId.Value, cancellationToken);
+
+        return Ok(mapper.Map<UserApiModel>(result));
+    }
+
+    /// <summary>
     ///     Получает пользователя по идентификатору
     /// </summary>
     [HttpGet("{id:guid}")]
-    [AllowAnonymous]
+    [Authorize(Roles = "User,Admin")]
     [ProducesResponseType(typeof(UserApiModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "UserGetById")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
+        if (!User.IsInRole("Admin"))
+        {
+            var currentUserId = GetCurrentUserId();
+
+            if (currentUserId is null)
+                return Unauthorized();
+
+            if (currentUserId.Value != id)
+                return Forbid();
+        }
+
         var result = await userService.GetById(id, cancellationToken);
 
         return Ok(mapper.Map<UserApiModel>(result));
@@ -52,7 +85,7 @@ public class UserController : ControllerBase
     ///     Получает список всех пользователей
     /// </summary>
     [HttpGet]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(IReadOnlyCollection<UserApiModel>), StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "UserGetAll")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
@@ -66,13 +99,16 @@ public class UserController : ControllerBase
     ///     Добавляет нового пользователя
     /// </summary>
     [HttpPost]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(UserApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
     [SwaggerOperation(OperationId = "UserCreate")]
     public async Task<IActionResult> Create(UserCreateApiModel request, CancellationToken cancellationToken)
     {
         var createModel = mapper.Map<UserCreateModel>(request);
+
         await validateService.Validate(createModel, cancellationToken);
+
         var result = await userService.Create(createModel, cancellationToken);
 
         return Ok(mapper.Map<UserApiModel>(result));
@@ -81,15 +117,30 @@ public class UserController : ControllerBase
     /// <summary>
     ///     Редактирует пользователя по идентификатору
     /// </summary>
-    [HttpPut]
+    [HttpPut("{id:guid}")]
+    [Authorize(Roles = "User,Admin")]
     [ProducesResponseType(typeof(UserApiModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
     [SwaggerOperation(OperationId = "UserEdit")]
     public async Task<IActionResult> Edit(Guid id, UserCreateApiModel request, CancellationToken cancellationToken)
     {
+        if (!User.IsInRole("Admin"))
+        {
+            var currentUserId = GetCurrentUserId();
+
+            if (currentUserId is null)
+                return Unauthorized();
+
+            if (currentUserId.Value != id)
+                return Forbid();
+        }
+
         var createModel = mapper.Map<UserCreateModel>(request);
+
         await validateService.Validate(createModel, cancellationToken);
+
         var result = await userService.Edit(id, createModel, cancellationToken);
 
         return Ok(mapper.Map<UserApiModel>(result));
@@ -99,6 +150,7 @@ public class UserController : ControllerBase
     ///     Удаляет пользователя по идентификатору
     /// </summary>
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "UserDelete")]
@@ -107,5 +159,15 @@ public class UserController : ControllerBase
         await userService.Delete(id, cancellationToken);
 
         return Ok();
+    }
+
+    private Guid? GetCurrentUserId()
+    {
+        var value = User.FindFirstValue("userid")
+            ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        return Guid.TryParse(value, out var userId)
+            ? userId
+            : null;
     }
 }
