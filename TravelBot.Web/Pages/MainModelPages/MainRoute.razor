@@ -1,5 +1,6 @@
 ﻿@page "/Route"
 @using TravelBot.Api.Client.Client
+@using TravelBot.Common
 @inject NavigationManager NavigationManager
 @inject ITravelBotApiClient TravelBotClient
 @inject IJSRuntime JsRuntime
@@ -39,7 +40,7 @@ else
 				<td>@(item.IsActive ? "да" : "нет")</td>
 				<td>@(item.ReasonToVisit ?? "нет причины")</td>
 				<td>@(item.StartPoint ?? "нет отправной точки")</td>
-				<td>@(GetSeasonName(item.Season) ?? "нет сезона")</td>
+				<td>@(item.Season.GetDisplayName())</td>
 				<td>@(item.Budget ?? "нет бюджета")</td>
 				<td>@(item.AverageTime.ToString())</td>
 				<td>
@@ -124,19 +125,4 @@ else
 			NavigationManager.NavigateTo("/login", true);
 		}
 	}
-
-	private static string? GetSeasonName(SeasonApiModel season)
-	{
-		return season switch
-		{
-			SeasonApiModel._0 => "Круглый год",
-			SeasonApiModel._1 => "Зима",
-			SeasonApiModel._2 => "Лето",
-			SeasonApiModel._3 => "Лето-осень",
-			SeasonApiModel._4 => "Весна-осень",
-			_ => null
-		};
-	}
-
-
 }

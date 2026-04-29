@@ -14,7 +14,7 @@ public sealed class TelegramUpdateHandler : ITelegramUpdateHandler, IBotServiceA
     private readonly IPassportService passportService;
     private readonly IBotCommandRouter commandRouter;
     private readonly ITelegramMessageSender sender;
-    private readonly ILogger<TelegramUpdateHandler> logger;
+    private readonly ILogger<ITelegramUpdateHandler> logger;
 
     /// <summary>
     /// ctor
@@ -25,7 +25,7 @@ public sealed class TelegramUpdateHandler : ITelegramUpdateHandler, IBotServiceA
         IPassportService passportService,
         IBotCommandRouter commandRouter,
         ITelegramMessageSender sender,
-        ILogger<TelegramUpdateHandler> logger)
+        ILogger<ITelegramUpdateHandler> logger)
     {
         this.registrationService = registrationService;
         this.registrationStateStore = registrationStateStore;

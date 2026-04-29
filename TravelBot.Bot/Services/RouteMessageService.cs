@@ -2,6 +2,7 @@ using TravelBot.Api.Client.Client;
 using TravelBot.Bot.Anchors;
 using TravelBot.Bot.Contracts.Services;
 using TravelBot.Bot.Helpers;
+using TravelBot.Common;
 
 namespace TravelBot.Bot.Services;
 
@@ -9,14 +10,14 @@ namespace TravelBot.Bot.Services;
 public sealed class RouteMessageService : IRouteMessageService, IBotServiceAnchor
 {
     private readonly ITravelBotApiClient apiClient;
-    private readonly TelegramMessageSender sender;
+    private readonly ITelegramMessageSender sender;
 
     /// <summary>
     /// ctor
     /// </summary>
     public RouteMessageService(
         ITravelBotApiClient apiClient,
-        TelegramMessageSender sender)
+        ITelegramMessageSender sender)
     {
         this.apiClient = apiClient;
         this.sender = sender;
@@ -46,7 +47,7 @@ public sealed class RouteMessageService : IRouteMessageService, IBotServiceAncho
                 $"📍 <b>Отправная точка:</b> {HtmlHelper.Encode(route.StartPoint)}\n" +
                 $"🕒 <b>Среднее время:</b> {route.AverageTime} мин\n" +
                 $"💰 <b>Бюджет:</b> {HtmlHelper.Encode(route.Budget)}\n" +
-                $"🌤 <b>Сезон:</b> {HtmlHelper.Encode(SeasonNameProvider.GetName(route.Season))}\n" +
+                $"🌤 <b>Сезон:</b> {HtmlHelper.Encode(route.Season.GetDisplayName())}\n" +
                 $"✨ <b>Причина посетить:</b> {HtmlHelper.Encode(route.ReasonToVisit)}\n\n" +
                 $"🏞 <b>Места:</b>\n{placesText}";
 

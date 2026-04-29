@@ -19,7 +19,7 @@ public sealed class UserRegistrationService : IUserRegistrationService, IBotServ
     public UserRegistrationService(
         ITravelBotApiClient apiClient,
         RegistrationStateStore stateStore,
-        PassportService passportService,
+        IPassportService passportService,
         ITelegramMessageSender sender)
     {
         this.apiClient = apiClient;

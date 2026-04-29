@@ -4,6 +4,8 @@
 // </auto-generated>
 //----------------------
 
+using System.ComponentModel.DataAnnotations;
+
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
 #pragma warning disable 472 // Disable "CS0472 The result of the expression is always 'false' since a value of type 'Int32' is never equal to 'null' of type 'Int32?'
@@ -4557,17 +4559,30 @@ namespace TravelBot.Api.Client.Client
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum SeasonApiModel
     {
+        /// <summary>
+        ///     Круглый год
+        /// </summary>
+        [Display(Name = "Круглый год")] AllYear = 0,
 
-        _0 = 0,
+        /// <summary>
+        ///     Зима
+        /// </summary>
+        [Display(Name = "Зима")] Winter = 1,
 
-        _1 = 1,
+        /// <summary>
+        ///     Лето
+        /// </summary>
+        [Display(Name = "Лето")] Summer = 2,
 
-        _2 = 2,
+        /// <summary>
+        ///     Лето-осень
+        /// </summary>
+        [Display(Name = "Лето-осень")] SummerAutumn = 3,
 
-        _3 = 3,
-
-        _4 = 4,
-
+        /// <summary>
+        ///     Весна-лето
+        /// </summary>
+        [Display(Name = "Весна-лето")] SpringSummer = 4
     }
 
     /// <summary>

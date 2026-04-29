@@ -11,14 +11,14 @@ namespace TravelBot.Bot.Services;
 public sealed class PassportService : IPassportService, IBotServiceAnchor
 {
     private readonly ITravelBotApiClient apiClient;
-    private readonly TelegramMessageSender sender;
+    private readonly ITelegramMessageSender sender;
 
     /// <summary>
     /// ctor
     /// </summary>
     public PassportService(
         ITravelBotApiClient apiClient,
-        TelegramMessageSender sender)
+        ITelegramMessageSender sender)
     {
         this.apiClient = apiClient;
         this.sender = sender;
