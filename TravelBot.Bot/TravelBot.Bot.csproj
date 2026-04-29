@@ -17,6 +17,7 @@
         <ProjectReference Include="..\TravelBot.Api.Client\TravelBot.Api.Client.csproj" />
         <ProjectReference Include="..\TravelBot.Bot.Contracts\TravelBot.Bot.Contracts.csproj" />
         <ProjectReference Include="..\TravelBot.Common.Infrastructure\TravelBot.Common.Infrastructure.csproj"/>
+        <ProjectReference Include="..\TravelBot.Constants\TravelBot.Constants.csproj" />
         <ProjectReference Include="..\TravelBot.Context\TravelBot.Context.csproj"/>
         <ProjectReference Include="..\TravelBot.Repositories.Contracts\TravelBot.Repositories.Contracts.csproj"/>
         <ProjectReference Include="..\TravelBot.Repositories\TravelBot.Repositories.csproj"/>

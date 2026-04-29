@@ -20,6 +20,7 @@
     <ItemGroup>
         <ProjectReference Include="..\TravelBot.Api.Client\TravelBot.Api.Client.csproj" />
         <ProjectReference Include="..\TravelBot.Common\TravelBot.Common.csproj" />
+        <ProjectReference Include="..\TravelBot.Constants\TravelBot.Constants.csproj" />
         <ProjectReference Include="..\TravelBot.Entities\TravelBot.Entities.csproj"/>
     </ItemGroup>
 

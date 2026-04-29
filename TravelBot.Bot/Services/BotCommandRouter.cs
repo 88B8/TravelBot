@@ -1,16 +1,12 @@
 using TravelBot.Bot.Anchors;
 using TravelBot.Bot.Contracts.Services;
+using TravelBot.Constants;
 
 namespace TravelBot.Bot.Services;
 
 /// <inheritdoc cref="IBotCommandRouter"/>
 public sealed class BotCommandRouter : IBotCommandRouter, IBotServiceAnchor
 {
-    public const string ShowRoutesCommand = "🗺 Показать маршруты";
-    public const string PassportCommand = "📄 Мой паспорт";
-    public const string HelpCommand = "❓ Помощь";
-    public const string ContactsCommand = "☎️ Контакты";
-
     private readonly IRouteMessageService routeMessageService;
     private readonly IPassportService passportService;
     private readonly ITelegramMessageSender sender;
@@ -32,30 +28,26 @@ public sealed class BotCommandRouter : IBotCommandRouter, IBotServiceAnchor
     {
         switch (text)
         {
-            case ShowRoutesCommand:
-            case "Показать маршруты":
+            case BotConstants.ShowRoutesCommand:
                 await routeMessageService.ShowRoutes(telegramId, cancellationToken);
                 break;
 
-            case PassportCommand:
-            case "Мой паспорт":
+            case BotConstants.PassportCommand:
                 await passportService.ShowPassport(telegramId, cancellationToken);
                 break;
 
-            case HelpCommand:
-            case "Помощь":
+            case BotConstants.HelpCommand:
                 await sender.SendHelp(telegramId, cancellationToken);
                 break;
 
-            case ContactsCommand:
-            case "Контакты":
+            case BotConstants.ContactsCommand:
                 await sender.SendContacts(telegramId, cancellationToken);
                 break;
 
             default:
                 await sender.SendText(
                     telegramId,
-                    "Неизвестная команда. Выберите действие на клавиатуре 👇",
+                    BotConstants.IncorrectCommandText,
                     cancellationToken);
 
                 await sender.SendMainKeyboard(telegramId, cancellationToken);

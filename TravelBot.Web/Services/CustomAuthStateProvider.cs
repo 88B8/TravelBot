@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using TravelBot.Constants;
 
 namespace TravelBot.Web.Services;
 
@@ -22,7 +23,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = await localStorage.GetItemAsync<string>("token");
+        var token = await localStorage.GetItemAsync<string>(AuthConstants.TokenKey);
 
         var identity = new ClaimsIdentity();
 
@@ -31,7 +32,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
             var handler = new JwtSecurityTokenHandler();
             var jwt = handler.ReadJwtToken(token);
 
-            identity = new ClaimsIdentity(jwt.Claims, "jwt");
+            identity = new ClaimsIdentity(jwt.Claims, AuthConstants.JwtAuthenticationType);
         }
 
         var user = new ClaimsPrincipal(identity);
@@ -44,7 +45,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
         var handler = new JwtSecurityTokenHandler();
         var jwt = handler.ReadJwtToken(token);
 
-        var identity = new ClaimsIdentity(jwt.Claims, "jwt");
+        var identity = new ClaimsIdentity(jwt.Claims, AuthConstants.JwtAuthenticationType);
         var user = new ClaimsPrincipal(identity);
 
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));

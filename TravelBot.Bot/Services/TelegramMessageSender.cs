@@ -3,6 +3,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using TravelBot.Bot.Anchors;
 using TravelBot.Bot.Contracts.Services;
+using TravelBot.Constants;
 
 namespace TravelBot.Bot.Services;
 
@@ -40,8 +41,8 @@ public sealed class TelegramMessageSender : ITelegramMessageSender, IBotServiceA
     async Task ITelegramMessageSender.SendMainKeyboard(long telegramId, CancellationToken cancellationToken)
     {
         var keyboard = new ReplyKeyboardMarkup([
-            [BotCommandRouter.ShowRoutesCommand, BotCommandRouter.PassportCommand],
-            [BotCommandRouter.HelpCommand, BotCommandRouter.ContactsCommand]
+            [BotConstants.ShowRoutesCommand, BotConstants.PassportCommand],
+            [BotConstants.HelpCommand, BotConstants.ContactsCommand]
         ])
         {
             ResizeKeyboard = true,
