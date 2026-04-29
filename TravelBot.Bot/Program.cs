@@ -16,7 +16,8 @@ public static class Program
         var host = Host.CreateDefaultBuilder(args)
             .ConfigureServices(services =>
             {
-                services.AddSingleton<ITelegramBotClient>(_ => new TelegramBotClient(telegramToken));
+                services.AddSingleton<ITelegramBotClient>(_ =>
+                    new TelegramBotClient(telegramToken));
 
                 services.AddHttpClient("TravelBotApi", client =>
                 {
@@ -30,6 +31,15 @@ public static class Program
 
                     return new TravelBotApiClient(apiBaseUrl, httpClient);
                 });
+
+                services.AddSingleton<RegistrationStateStore>();
+
+                services.AddScoped<TelegramUpdateHandler>();
+                services.AddScoped<TelegramMessageSender>();
+                services.AddScoped<UserRegistrationService>();
+                services.AddScoped<PassportService>();
+                services.AddScoped<RouteMessageService>();
+                services.AddScoped<BotCommandRouter>();
 
                 services.AddHostedService<BotService>();
             })
