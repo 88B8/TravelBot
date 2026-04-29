@@ -1,4 +1,6 @@
 using TravelBot.Api.Client.Client;
+using TravelBot.Bot.Anchors;
+using TravelBot.Bot.Contracts.Services;
 using TravelBot.Bot.Helpers;
 
 namespace TravelBot.Bot.Services;
@@ -6,7 +8,7 @@ namespace TravelBot.Bot.Services;
 /// <summary>
 /// Сервис работы с паспортом пользователя
 /// </summary>
-public sealed class PassportService
+public sealed class PassportService : IPassportService, IBotServiceAnchor
 {
     private readonly ITravelBotApiClient apiClient;
     private readonly TelegramMessageSender sender;
@@ -22,7 +24,7 @@ public sealed class PassportService
         this.sender = sender;
     }
 
-    public async Task ShowPassport(long telegramId, CancellationToken cancellationToken)
+    async Task IPassportService.ShowPassport(long telegramId, CancellationToken cancellationToken)
     {
         var user = await TryGetUserByTelegramId(telegramId, cancellationToken);
 
@@ -59,7 +61,7 @@ public sealed class PassportService
         await sender.SendText(telegramId, message, cancellationToken);
     }
 
-    public async Task AddPlaceToPassport(
+    async Task IPassportService.AddPlaceToPassport(
         long telegramId,
         Guid placeId,
         CancellationToken cancellationToken)

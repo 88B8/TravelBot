@@ -4,18 +4,25 @@ using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
+using TravelBot.Bot.Contracts.Services;
 
 namespace TravelBot.Bot.Services;
 
+/// <summary>
+/// Фоновый сервис бота
+/// </summary>
 public sealed class BotService : BackgroundService
 {
     private readonly ITelegramBotClient botClient;
-    private readonly TelegramUpdateHandler updateHandler;
+    private readonly ITelegramUpdateHandler updateHandler;
     private readonly ILogger<BotService> logger;
 
+    /// <summary>
+    /// ctor
+    /// </summary>
     public BotService(
         ITelegramBotClient botClient,
-        TelegramUpdateHandler updateHandler,
+        ITelegramUpdateHandler updateHandler,
         ILogger<BotService> logger)
     {
         this.botClient = botClient;

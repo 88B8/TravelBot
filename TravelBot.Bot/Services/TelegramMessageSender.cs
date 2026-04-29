@@ -1,10 +1,13 @@
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TravelBot.Bot.Anchors;
+using TravelBot.Bot.Contracts.Services;
 
 namespace TravelBot.Bot.Services;
 
-public sealed class TelegramMessageSender
+/// <inheritdoc cref="ITelegramMessageSender"/>
+public sealed class TelegramMessageSender : ITelegramMessageSender, IBotServiceAnchor
 {
     private readonly ITelegramBotClient botClient;
 
@@ -34,7 +37,7 @@ public sealed class TelegramMessageSender
             cancellationToken: cancellationToken);
     }
 
-    public async Task SendMainKeyboard(long telegramId, CancellationToken cancellationToken)
+    async Task ITelegramMessageSender.SendMainKeyboard(long telegramId, CancellationToken cancellationToken)
     {
         var keyboard = new ReplyKeyboardMarkup([
             [BotCommandRouter.ShowRoutesCommand, BotCommandRouter.PassportCommand],
@@ -53,7 +56,7 @@ public sealed class TelegramMessageSender
             cancellationToken: cancellationToken);
     }
 
-    public Task SendHelp(long telegramId, CancellationToken cancellationToken)
+    Task ITelegramMessageSender.SendHelp(long telegramId, CancellationToken cancellationToken)
     {
         const string message =
             "❓ <b>Помощь</b>\n\n" +
@@ -64,7 +67,7 @@ public sealed class TelegramMessageSender
         return SendText(telegramId, message, cancellationToken);
     }
 
-    public Task SendContacts(long telegramId, CancellationToken cancellationToken)
+    Task ITelegramMessageSender.SendContacts(long telegramId, CancellationToken cancellationToken)
     {
         const string message =
             "☎️ <b>Контакты</b>\n\n" +

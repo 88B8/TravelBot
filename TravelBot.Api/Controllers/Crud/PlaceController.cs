@@ -37,7 +37,7 @@ public class PlaceController : ControllerBase
     ///     Получает место по идентификатору
     /// </summary>
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(PlaceApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [SwaggerOperation(OperationId = "PlaceGetById")]

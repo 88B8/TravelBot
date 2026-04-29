@@ -83,7 +83,7 @@ public class PassportController : ControllerBase
     ///     Редактирует паспорт по идентификатору
     /// </summary>
     [HttpPut]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(PassportApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiExceptionDetail), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]

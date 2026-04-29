@@ -1,28 +1,30 @@
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using TravelBot.Bot.Anchors;
+using TravelBot.Bot.Contracts.Services;
 using TravelBot.Bot.Helpers;
 
 namespace TravelBot.Bot.Services;
 
-public sealed class TelegramUpdateHandler
+public sealed class TelegramUpdateHandler : ITelegramUpdateHandler, IBotServiceAnchor
 {
-    private readonly UserRegistrationService registrationService;
+    private readonly IUserRegistrationService registrationService;
     private readonly RegistrationStateStore registrationStateStore;
-    private readonly PassportService passportService;
-    private readonly BotCommandRouter commandRouter;
-    private readonly TelegramMessageSender sender;
+    private readonly IPassportService passportService;
+    private readonly IBotCommandRouter commandRouter;
+    private readonly ITelegramMessageSender sender;
     private readonly ILogger<TelegramUpdateHandler> logger;
 
     /// <summary>
     /// ctor
     /// </summary>
     public TelegramUpdateHandler(
-        UserRegistrationService registrationService,
+        IUserRegistrationService registrationService,
         RegistrationStateStore registrationStateStore,
-        PassportService passportService,
-        BotCommandRouter commandRouter,
-        TelegramMessageSender sender,
+        IPassportService passportService,
+        IBotCommandRouter commandRouter,
+        ITelegramMessageSender sender,
         ILogger<TelegramUpdateHandler> logger)
     {
         this.registrationService = registrationService;
@@ -33,7 +35,7 @@ public sealed class TelegramUpdateHandler
         this.logger = logger;
     }
 
-    public async Task HandleUpdateSafe(
+    async Task ITelegramUpdateHandler.HandleUpdateSafe(
         ITelegramBotClient bot,
         Update update,
         CancellationToken cancellationToken)
@@ -88,7 +90,7 @@ public sealed class TelegramUpdateHandler
 
         if (!await registrationService.IsRegistered(telegramId, cancellationToken))
         {
-            await registrationService.AskName(telegramId, null, cancellationToken);
+            await registrationService.Onboard(telegramId, null, cancellationToken);
             return;
         }
 
@@ -104,7 +106,7 @@ public sealed class TelegramUpdateHandler
 
         if (!await registrationService.IsRegistered(telegramId, cancellationToken))
         {
-            await registrationService.AskName(telegramId, placeId, cancellationToken);
+            await registrationService.Onboard(telegramId, placeId, cancellationToken);
             return;
         }
 

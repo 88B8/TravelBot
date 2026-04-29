@@ -1,9 +1,12 @@
 using TravelBot.Api.Client.Client;
+using TravelBot.Bot.Anchors;
+using TravelBot.Bot.Contracts.Services;
 using TravelBot.Bot.Helpers;
 
 namespace TravelBot.Bot.Services;
 
-public sealed class RouteMessageService
+/// <inheritdoc cref="IRouteMessageService"/>
+public sealed class RouteMessageService : IRouteMessageService, IBotServiceAnchor
 {
     private readonly ITravelBotApiClient apiClient;
     private readonly TelegramMessageSender sender;
@@ -19,7 +22,7 @@ public sealed class RouteMessageService
         this.sender = sender;
     }
 
-    public async Task ShowRoutes(long telegramId, CancellationToken cancellationToken)
+    async Task IRouteMessageService.ShowRoutes(long telegramId, CancellationToken cancellationToken)
     {
         var routes = await apiClient.RouteGetAllActiveAsync(cancellationToken);
 

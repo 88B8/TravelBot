@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Context.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Constants", "TravelBot.Constants\TravelBot.Constants.csproj", "{10B9CBC7-E4AE-4401-994E-306F3F78A44A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelBot.Bot.Contracts", "TravelBot.Bot.Contracts\TravelBot.Bot.Contracts.csproj", "{304B2AF5-6A94-465D-97E7-833EDAA4D801}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,10 @@ Global
 		{10B9CBC7-E4AE-4401-994E-306F3F78A44A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10B9CBC7-E4AE-4401-994E-306F3F78A44A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10B9CBC7-E4AE-4401-994E-306F3F78A44A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{304B2AF5-6A94-465D-97E7-833EDAA4D801}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{304B2AF5-6A94-465D-97E7-833EDAA4D801}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{304B2AF5-6A94-465D-97E7-833EDAA4D801}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{304B2AF5-6A94-465D-97E7-833EDAA4D801}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

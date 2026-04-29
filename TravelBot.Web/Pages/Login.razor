@@ -14,15 +14,17 @@
 		<div class="login-form">
 			<div class="form-group">
 				<label>Логин</label>
-				<input @bind="login" placeholder="Введите логин"/>
+				<input @bind="login" placeholder="Введите логин" />
 			</div>
 
 			<div class="form-group">
 				<label>Пароль</label>
-				<input type="password" @bind="password" placeholder="Введите пароль"/>
+				<input type="password" @bind="password" placeholder="Введите пароль" />
 			</div>
 
-			<button @onclick="HandleLogin">Войти</button>
+			<button @onclick="HandleLogin" disabled="@isLoading">
+				@(isLoading ? "Входим..." : "Войти")
+			</button>
 		</div>
 
 		@if (!string.IsNullOrEmpty(errorMessage))
@@ -117,6 +119,11 @@
 		transform: scale(0.98);
 	}
 
+	button:disabled {
+		opacity: 0.7;
+		cursor: not-allowed;
+	}
+
 	.error-message {
 		margin-top: 18px;
 		padding: 12px 14px;
@@ -131,28 +138,40 @@
 	private string login = string.Empty;
 	private string password = string.Empty;
 	private string errorMessage = string.Empty;
+	private bool isLoading;
 
 	private async Task HandleLogin()
 	{
 		errorMessage = string.Empty;
+		isLoading = true;
 
-		var request = new LoginRequestApiModel
+		try
 		{
-			Login = login,
-			Password = password
-		};
+			var request = new LoginRequestApiModel
+			{
+				Login = login,
+				Password = password
+			};
 
-		var token = await ClientAuthService.LoginUser(request, CancellationToken.None);
+			var token = await ClientAuthService.LoginUser(request, CancellationToken.None);
 
-		if (!string.IsNullOrEmpty(token))
-		{
-			AuthStateProvider.NotifyUserAuthentication(token);
-
-			NavigationManager.NavigateTo("/Category");
+			if (!string.IsNullOrEmpty(token))
+			{
+				AuthStateProvider.NotifyUserAuthentication(token);
+				NavigationManager.NavigateTo("/Category");
+			}
+			else
+			{
+				errorMessage = "Неверный логин или пароль";
+			}
 		}
-		else
+		catch
 		{
 			errorMessage = "Неверный логин или пароль";
+		}
+		finally
+		{
+			isLoading = false;
 		}
 	}
 }

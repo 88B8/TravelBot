@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 using TravelBot.Api.Client.Client;
+using TravelBot.Bot.Contracts.Services;
 using TravelBot.Bot.Services;
 
 namespace TravelBot.Bot.Extensions;
@@ -56,11 +57,11 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<RegistrationStateStore>();
 
-        services.AddScoped<TelegramUpdateHandler>();
-        services.AddScoped<TelegramMessageSender>();
-        services.AddScoped<UserRegistrationService>();
-        services.AddScoped<PassportService>();
-        services.AddScoped<RouteMessageService>();
-        services.AddScoped<BotCommandRouter>();
+        services.AddScoped<ITelegramUpdateHandler, TelegramUpdateHandler>();
+        services.AddScoped<ITelegramMessageSender, TelegramMessageSender>();
+        services.AddScoped<IUserRegistrationService, UserRegistrationService>();
+        services.AddScoped<IPassportService, PassportService>();
+        services.AddScoped<IRouteMessageService, RouteMessageService>();
+        services.AddScoped<IBotCommandRouter, BotCommandRouter>();
     }
 }

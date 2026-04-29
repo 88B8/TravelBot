@@ -1,30 +1,34 @@
+using TravelBot.Bot.Anchors;
+using TravelBot.Bot.Contracts.Services;
+
 namespace TravelBot.Bot.Services;
 
-public sealed class BotCommandRouter
+/// <inheritdoc cref="IBotCommandRouter"/>
+public sealed class BotCommandRouter : IBotCommandRouter, IBotServiceAnchor
 {
     public const string ShowRoutesCommand = "🗺 Показать маршруты";
     public const string PassportCommand = "📄 Мой паспорт";
     public const string HelpCommand = "❓ Помощь";
     public const string ContactsCommand = "☎️ Контакты";
 
-    private readonly RouteMessageService routeMessageService;
-    private readonly PassportService passportService;
-    private readonly TelegramMessageSender sender;
+    private readonly IRouteMessageService routeMessageService;
+    private readonly IPassportService passportService;
+    private readonly ITelegramMessageSender sender;
 
     /// <summary>
     /// ctor
     /// </summary>
     public BotCommandRouter(
-        RouteMessageService routeMessageService,
-        PassportService passportService,
-        TelegramMessageSender sender)
+        IRouteMessageService routeMessageService,
+        IPassportService passportService,
+        ITelegramMessageSender sender)
     {
         this.routeMessageService = routeMessageService;
         this.passportService = passportService;
         this.sender = sender;
     }
 
-    public async Task Handle(long telegramId, string text, CancellationToken cancellationToken)
+    async Task IBotCommandRouter.Handle(long telegramId, string text, CancellationToken cancellationToken)
     {
         switch (text)
         {

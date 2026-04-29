@@ -1,20 +1,26 @@
 using TravelBot.Api.Client.Client;
+using TravelBot.Bot.Anchors;
+using TravelBot.Bot.Contracts.Services;
 using TravelBot.Bot.Helpers;
 
 namespace TravelBot.Bot.Services;
 
-public sealed class UserRegistrationService
+/// <inheritdoc cref="IUserRegistrationService"/>
+public sealed class UserRegistrationService : IUserRegistrationService, IBotServiceAnchor
 {
     private readonly ITravelBotApiClient apiClient;
     private readonly RegistrationStateStore stateStore;
-    private readonly PassportService passportService;
-    private readonly TelegramMessageSender sender;
+    private readonly IPassportService passportService;
+    private readonly ITelegramMessageSender sender;
 
+    /// <summary>
+    /// ctor
+    /// </summary>
     public UserRegistrationService(
         ITravelBotApiClient apiClient,
         RegistrationStateStore stateStore,
         PassportService passportService,
-        TelegramMessageSender sender)
+        ITelegramMessageSender sender)
     {
         this.apiClient = apiClient;
         this.stateStore = stateStore;
@@ -22,26 +28,13 @@ public sealed class UserRegistrationService
         this.sender = sender;
     }
 
-    public async Task<bool> IsRegistered(long telegramId, CancellationToken cancellationToken)
+    async Task<bool> IUserRegistrationService.IsRegistered(long telegramId, CancellationToken cancellationToken)
     {
         return await TryGetUserByTelegramId(telegramId, cancellationToken) is not null;
     }
+    
 
-    private async Task<UserApiModel?> TryGetUserByTelegramId(
-        long telegramId,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            return await apiClient.UserGetByTelegramIdAsync(telegramId, cancellationToken);
-        }
-        catch (ApiException exception) when (exception.StatusCode == 404)
-        {
-            return null;
-        }
-    }
-
-    public async Task AskName(
+    async Task IUserRegistrationService.Onboard(
         long telegramId,
         Guid? pendingPlaceId,
         CancellationToken cancellationToken)
@@ -55,7 +48,7 @@ public sealed class UserRegistrationService
         await sender.SendText(telegramId, message, cancellationToken, removeKeyboard: true);
     }
 
-    public async Task CompleteRegistration(
+    async Task IUserRegistrationService.CompleteRegistration(
         long telegramId,
         string name,
         Guid? pendingPlaceId,
@@ -105,5 +98,19 @@ public sealed class UserRegistrationService
             await passportService.AddPlaceToPassport(telegramId, pendingPlaceId.Value, cancellationToken);
 
         await sender.SendMainKeyboard(telegramId, cancellationToken);
+    }
+    
+    private async Task<UserApiModel?> TryGetUserByTelegramId(
+        long telegramId,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await apiClient.UserGetByTelegramIdAsync(telegramId, cancellationToken);
+        }
+        catch (ApiException exception) when (exception.StatusCode == 404)
+        {
+            return null;
+        }
     }
 }
