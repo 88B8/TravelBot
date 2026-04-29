@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.EntityFrameworkCore;
 using TravelBot.Api.Extensions;
-using TravelBot.Api.Infrastructure;
-using TravelBot.Context;
-using TravelBot.Services.Contracts.Models.Auth;
 
 namespace TravelBot.Api;
 
@@ -18,41 +14,12 @@ public static class Program
         AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
 
         var builder = WebApplication.CreateBuilder(args);
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("Policy", config =>
-            {
-                config.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            });
-        });
-
-        builder.Services.AddDbContext<TravelBotContext>(options =>
-            options.UseNpgsql(connectionString)
-                .LogTo(Console.WriteLine));
-
-        builder.Services.RegisterDependencies();
-        builder.Services.AddApiAuthentication(builder.Configuration);
-        var controllers = builder.Services.AddControllers(opt => { opt.Filters.Add<TravelBotExceptionFilter>(); });
-
-        if (builder.Environment.EnvironmentName == EnvironmentNames.Integration) controllers.AddControllersAsServices();
-
-        builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
-        {
-            c.EnableAnnotations();
-            var baseDirectory = AppContext.BaseDirectory;
-            c.IncludeXmlComments(Path.Combine(baseDirectory, "TravelBot.Api.xml"));
-            c.IncludeXmlComments(Path.Combine(baseDirectory, "TravelBot.Entities.xml"));
-        });
+        builder.Services.AddTravelBotApi(builder.Configuration, builder.Environment);
 
         var app = builder.Build();
 
-        app.UseCors("Policy");
+        app.UseCors(ServiceExtensions.GetCorsPolicyName());
 
         if (app.Environment.IsDevelopment())
         {

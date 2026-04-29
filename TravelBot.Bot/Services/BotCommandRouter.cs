@@ -11,6 +11,9 @@ public sealed class BotCommandRouter
     private readonly PassportService passportService;
     private readonly TelegramMessageSender sender;
 
+    /// <summary>
+    /// ctor
+    /// </summary>
     public BotCommandRouter(
         RouteMessageService routeMessageService,
         PassportService passportService,

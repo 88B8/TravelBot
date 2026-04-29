@@ -1,14 +1,19 @@
-using Telegram.Bot.Exceptions;
 using TravelBot.Api.Client.Client;
 using TravelBot.Bot.Helpers;
 
 namespace TravelBot.Bot.Services;
 
+/// <summary>
+/// Сервис работы с паспортом пользователя
+/// </summary>
 public sealed class PassportService
 {
     private readonly ITravelBotApiClient apiClient;
     private readonly TelegramMessageSender sender;
 
+    /// <summary>
+    /// ctor
+    /// </summary>
     public PassportService(
         ITravelBotApiClient apiClient,
         TelegramMessageSender sender)

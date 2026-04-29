@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using TravelBot.Bot.Models;
 
 namespace TravelBot.Bot.Services;
 
@@ -21,5 +22,3 @@ public sealed class RegistrationStateStore
         states.TryRemove(telegramId, out _);
     }
 }
-
-public sealed record RegistrationState(Guid? PendingPlaceId);

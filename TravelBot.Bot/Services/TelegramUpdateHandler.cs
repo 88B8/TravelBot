@@ -14,6 +14,9 @@ public sealed class TelegramUpdateHandler
     private readonly TelegramMessageSender sender;
     private readonly ILogger<TelegramUpdateHandler> logger;
 
+    /// <summary>
+    /// ctor
+    /// </summary>
     public TelegramUpdateHandler(
         UserRegistrationService registrationService,
         RegistrationStateStore registrationStateStore,

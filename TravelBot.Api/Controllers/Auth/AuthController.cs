@@ -28,7 +28,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    ///     Аутентификация администратора
+    ///     Авторизация администратора
     /// </summary>
     [HttpPost("login")]
     [AllowAnonymous]

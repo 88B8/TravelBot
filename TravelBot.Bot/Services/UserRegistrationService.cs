@@ -27,7 +27,7 @@ public sealed class UserRegistrationService
         return await TryGetUserByTelegramId(telegramId, cancellationToken) is not null;
     }
 
-    public async Task<UserApiModel?> TryGetUserByTelegramId(
+    private async Task<UserApiModel?> TryGetUserByTelegramId(
         long telegramId,
         CancellationToken cancellationToken)
     {
@@ -78,7 +78,10 @@ public sealed class UserRegistrationService
         if (existingUser is null)
         {
             var passport = await apiClient.PassportCreateAsync(
-                new PassportCreateApiModel(),
+                new PassportCreateApiModel
+                {
+                    PlaceIds = []
+                },
                 cancellationToken);
 
             await apiClient.UserCreateAsync(

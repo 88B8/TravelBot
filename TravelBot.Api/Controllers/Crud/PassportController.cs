@@ -66,7 +66,7 @@ public class PassportController : ControllerBase
     ///     Добавляет новый паспорт
     /// </summary>
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(PassportApiModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiValidationExceptionDetail), StatusCodes.Status422UnprocessableEntity)]
     [SwaggerOperation(OperationId = "PassportCreate")]

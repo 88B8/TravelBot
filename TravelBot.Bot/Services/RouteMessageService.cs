@@ -8,6 +8,9 @@ public sealed class RouteMessageService
     private readonly ITravelBotApiClient apiClient;
     private readonly TelegramMessageSender sender;
 
+    /// <summary>
+    /// ctor
+    /// </summary>
     public RouteMessageService(
         ITravelBotApiClient apiClient,
         TelegramMessageSender sender)

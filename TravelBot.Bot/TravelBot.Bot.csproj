@@ -19,6 +19,9 @@
         <ProjectReference Include="..\TravelBot.Context\TravelBot.Context.csproj"/>
         <ProjectReference Include="..\TravelBot.Repositories.Contracts\TravelBot.Repositories.Contracts.csproj"/>
         <ProjectReference Include="..\TravelBot.Repositories\TravelBot.Repositories.csproj"/>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

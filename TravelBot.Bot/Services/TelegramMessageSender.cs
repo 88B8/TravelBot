@@ -8,6 +8,9 @@ public sealed class TelegramMessageSender
 {
     private readonly ITelegramBotClient botClient;
 
+    /// <summary>
+    /// ctor
+    /// </summary>
     public TelegramMessageSender(ITelegramBotClient botClient)
     {
         this.botClient = botClient;
